@@ -248,6 +248,11 @@ class Person
 {
 private:
     int healthPoint;
+    int stamina;
+    int maxHealthPoint;
+    int maxStamina;
+    int money;
+
 
 public:
     int getHeallthPoint()
@@ -257,6 +262,38 @@ public:
     void setHealthPoint(int healthPoint)
     {
         this->healthPoint = healthPoint;
+    }
+    int getStamina()
+    {
+        return stamina;
+    }
+    void setStamina(int stamina)
+    {
+        this->stamina = stamina;
+    }
+    int getMoney()
+    {
+        return money;
+    }
+    void setMoney(int money)
+    {
+        this->money = money;
+    }
+    int getMaxHealthPoint()
+    {
+        return maxHealthPoint;
+    }
+    void setMaxHealthPoint(int maxHealthPoint)
+    {
+        this->maxHealthPoint = maxHealthPoint;
+    }
+    int getMaxStamina()
+    {
+        return maxStamina;
+    }
+    void setMaxStamina(int maxStamina)
+    {
+        this->maxStamina = maxStamina;
     }
 };
 
@@ -268,13 +305,14 @@ private:
     int price;
 
 public:
-    Item(string name,int size,int price){
-        this->name=name;
-        this->size=size;
-        this->price=price;
+    Item(string name, int size, int price)
+    {
+        this->name = name;
+        this->size = size;
+        this->price = price;
     }
 
-        string getName()
+    string getName()
     {
         return name;
     }
@@ -303,9 +341,11 @@ class ConsumableItem : public Item
 {
 protected:
     bool isUsed = 0;
+
 public:
-    ConsumableItem(string name,int size,int price,bool isUsed) : Item(name, size, price) {
-        this->isUsed=isUsed;
+    ConsumableItem(string name, int size, int price, bool isUsed) : Item(name, size, price)
+    {
+        this->isUsed = isUsed;
     }
     bool getIsUsed()
     {
@@ -324,8 +364,9 @@ private:
     int treatmentValue;
 
 public:
-    Medicine(string name,int size,int price,bool isUsed,int treatmentValue):ConsumableItem(name, size, price,isUsed){
-        this->treatmentValue=treatmentValue;
+    Medicine(string name, int size, int price, bool isUsed, int treatmentValue) : ConsumableItem(name, size, price, isUsed)
+    {
+        this->treatmentValue = treatmentValue;
     }
 
     int getTreatmentValue()
@@ -340,6 +381,7 @@ public:
     {
         if (!isUsed)
         {
+            // player->setMoney(player->getMoney() - getPrice());
             player->setHealthPoint(player->getHeallthPoint() + treatmentValue);
             isUsed = 1;
             return;
@@ -347,41 +389,105 @@ public:
         print("Sorry this item has already been used.\n", color_red, color_black);
     }
 };
+class Food : public ConsumableItem
+{
+private:
+    int staminaValue;
+
+public:
+    Food(string name, int size, int price, bool isUsed, int staminaValue) : ConsumableItem(name, size, price, isUsed)
+    {
+        this->staminaValue = staminaValue;
+    }
+
+    int getStaminaValue()
+    {
+        return staminaValue;
+    }
+    void setStaminaValue(int treatmentValue)
+    {
+        this->staminaValue = treatmentValue;
+    }
+    void useItem(Person *player)
+    {
+        if (!isUsed)
+        {
+            player->setStamina(player->getStamina() + staminaValue);
+            // player->setMoney(player->getMoney() - getPrice());
+            isUsed = 1;
+            return;
+        }
+        print("Sorry this item has already been used.\n", color_red, color_black);
+    }
+};
+void printPlayerProperty(Person* player){
+    cout << "Money : " << player->getMoney() <<"\n";
+    cout << "HP : " << player->getHeallthPoint() << " / "<<player->getMaxHealthPoint()<< "\n";
+    cout << "Stamina : " << player->getStamina()<< " / "<<player->getMaxStamina()<< "\n\n";
+}
 
 int main()
 {
-    Item bomb("BOMB",2,300);
+    Item bomb("BOMB", 2, 300);
     cout << "name :" << bomb.getName() << "\n";
     cout << "price :" << bomb.getPrice() << "\n";
     cout << "size :" << bomb.getSize() << "\n";
-
+    cout << "\n";
 
     Person Ali;
     Ali.setHealthPoint(14);
+    Ali.setMoney(170);
+    Ali.setStamina(12);
+    Ali.setMaxStamina(70);
+    Ali.setMaxHealthPoint(50);
 
-    Medicine m1("drug",1,3,0,1);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
-    m1.useItem(&Ali);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
-    m1.useItem(&Ali);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    printPlayerProperty(&Ali);
 
+    Medicine drug("drug", 1, 3, 0, 1);
+    cout <<"using "<< drug.getName()<<" :\n";
+    drug.useItem(&Ali);
+    // drug.useItem(&Ali);
+    cout << "\n";
 
-    Medicine m2("first aid box",1,13,0,5);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
-    m2.useItem(&Ali);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
-    m2.useItem(&Ali);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    printPlayerProperty(&Ali);
 
+    Medicine firstAidBox("first aid box", 1, 13, 0, 5);
+    cout <<"using "<< firstAidBox.getName()<<" :\n";
+    firstAidBox.useItem(&Ali);
+    // firstAidBox.useItem(&Ali);
+    cout << "\n";
 
+        printPlayerProperty(&Ali);
 
-    // Medicine m3("first aid box",2,30*maxhealth*0.6,0,maxHealth-currentHealth);
-    // maxhealth=10,currentHealth=2
-    Medicine m3("",2,18,0,8);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
-    m3.useItem(&Ali);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
-    m3.useItem(&Ali);
-    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    Medicine mandrake("mandrake",2,Ali.getMaxHealthPoint()*3*0.6,0,Ali.getMaxHealthPoint()-Ali.getHeallthPoint());
+    cout <<"using "<< mandrake.getName()<<" :\n";
+    mandrake.useItem(&Ali);   
+    // mandrake.useItem(&Ali);
+    cout << "\n";
+
+    printPlayerProperty(&Ali);
+
+    Food conserve("conserve", 1, 3, 0, 1);
+    cout <<"using "<< conserve.getName()<<" :\n";
+    conserve.useItem(&Ali);
+    // conserve.useItem(&Ali);
+    cout << "\n";
+
+    printPlayerProperty(&Ali);
+
+    Food meat("meat", 2, 13, 0, 5);
+    cout <<"using "<< meat.getName()<<" :\n";
+    meat.useItem(&Ali);
+    // meat.useItem(&Ali);
+    cout << "\n";
+
+    printPlayerProperty(&Ali);
+
+    Food  powerElixir ("power elixir", 2, Ali.getMaxStamina()*3*0.6, 0,Ali.getMaxStamina()-Ali.getStamina() );
+    cout <<"using "<< powerElixir.getName()<<" :\n";
+    powerElixir.useItem(&Ali);    
+    // // mandrake.useItem(&Ali);
+    cout << "\n";
+
+        printPlayerProperty(&Ali);
 }
