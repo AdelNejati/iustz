@@ -244,6 +244,144 @@ int getch(void)
 }
 #endif
 
-int main(){
-	cout<<"WE ARE COMMING ...";
+class Person
+{
+private:
+    int healthPoint;
+
+public:
+    int getHeallthPoint()
+    {
+        return healthPoint;
+    }
+    void setHealthPoint(int healthPoint)
+    {
+        this->healthPoint = healthPoint;
+    }
+};
+
+class Item
+{
+private:
+    string name;
+    int size;
+    int price;
+
+public:
+    Item(string name,int size,int price){
+        this->name=name;
+        this->size=size;
+        this->price=price;
+    }
+
+        string getName()
+    {
+        return name;
+    }
+    void setName(string name)
+    {
+        this->name = name;
+    }
+    int getSize()
+    {
+        return size;
+    }
+    void setSize(int size)
+    {
+        this->size = size;
+    }
+    int getPrice()
+    {
+        return price;
+    }
+    void setPrice(int price)
+    {
+        this->price = price;
+    }
+};
+class ConsumableItem : public Item
+{
+protected:
+    bool isUsed = 0;
+public:
+    ConsumableItem(string name,int size,int price,bool isUsed) : Item(name, size, price) {
+        this->isUsed=isUsed;
+    }
+    bool getIsUsed()
+    {
+        return isUsed;
+    }
+    void setIsUsed(bool isUsed)
+    {
+        this->isUsed = isUsed;
+    }
+
+    virtual void useItem(Person *player) = 0;
+};
+class Medicine : public ConsumableItem
+{
+private:
+    int treatmentValue;
+
+public:
+    Medicine(string name,int size,int price,bool isUsed,int treatmentValue):ConsumableItem(name, size, price,isUsed){
+        this->treatmentValue=treatmentValue;
+    }
+
+    int getTreatmentValue()
+    {
+        return treatmentValue;
+    }
+    void setTreatmentValue(int treatmentValue)
+    {
+        this->treatmentValue = treatmentValue;
+    }
+    void useItem(Person *player)
+    {
+        if (!isUsed)
+        {
+            player->setHealthPoint(player->getHeallthPoint() + treatmentValue);
+            isUsed = 1;
+            return;
+        }
+        print("Sorry this item has already been used.\n", color_red, color_black);
+    }
+};
+
+int main()
+{
+    Item bomb("BOMB",2,300);
+    cout << "name :" << bomb.getName() << "\n";
+    cout << "price :" << bomb.getPrice() << "\n";
+    cout << "size :" << bomb.getSize() << "\n";
+
+
+    Person Ali;
+    Ali.setHealthPoint(14);
+
+    Medicine m1("drug",1,3,0,1);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    m1.useItem(&Ali);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    m1.useItem(&Ali);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+
+
+    Medicine m2("first aid box",1,13,0,5);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    m2.useItem(&Ali);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    m2.useItem(&Ali);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+
+
+
+    // Medicine m3("first aid box",2,30*maxhealth*0.6,0,maxHealth-currentHealth);
+    // maxhealth=10,currentHealth=2
+    Medicine m3("",2,18,0,8);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    m3.useItem(&Ali);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
+    m3.useItem(&Ali);
+    cout << "HP:" << Ali.getHeallthPoint() << "\n";
 }
