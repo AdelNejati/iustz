@@ -244,33 +244,241 @@ int getch(void)
 }
 #endif
 
-class Person
+// 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+class Hp
 {
 private:
-    int healthPoint;
-    int stamina;
-    int maxHealthPoint;
-    int maxStamina;
-    int money;
-
+    int maxHp;
+    int currentHp;
 
 public:
-    int getHeallthPoint()
+    Hp()
     {
-        return healthPoint;
+        currentHp = 100;
+        maxHp = 100;
+
     }
-    void setHealthPoint(int healthPoint)
+    // Hp(int currentHp, int maxHp)
+    // {
+    //     this->currentHp = currentHp;
+    //     this->maxHp = maxHp;
+    //     if (currentHp > maxHp){
+    //         currentHp = maxHp;
+    //     }
+    // }
+
+
+    int getMaxHp()
     {
-        this->healthPoint = healthPoint;
+        return maxHp;
     }
-    int getStamina()
+
+    /// <summary> this function use for change the max hp </summary>
+    bool setMaxHp(int newMaxHp)
     {
-        return stamina;
+        if (newMaxHp < 1)
+        {
+            return false;
+        }
+
+        maxHp = newMaxHp;
+
+        if (currentHp > maxHp)
+        {
+            currentHp = maxHp;
+        }
+        return true;
     }
-    void setStamina(int stamina)
+
+    int getCurrentHp()
     {
-        this->stamina = stamina;
+        return currentHp;
     }
+
+    
+    /// <summary> this function receives heal and increase the hp </summary>
+    void heal(int hp)
+    {
+        if (currentHp + hp >= maxHp)
+        {
+            currentHp = maxHp;
+            return;
+        }
+
+        currentHp += hp;
+    }
+
+    /// <summary> this function receives damage and reduce the hp </summary>
+    void takeDamage(int damage)
+    {
+        if (damage > currentHp)
+        {
+            currentHp = 0;
+            return;
+        }
+
+        currentHp -= damage;
+    }
+
+    // Hp()
+    // {
+    //     currentHp = 100;
+    //     maxHp = 100;
+    // }
+
+
+};
+
+class Level
+{
+private:
+    int currentXp;
+    int xpToLevelUp;
+    int currentLevel;
+
+public:
+// for enemy
+    Level(int level)
+    {
+        currentLevel = level;
+    }
+    // for users
+    Level()
+    {
+        xpToLevelUp=100;
+        this->currentXp=currentXp;
+        currentLevel = 1;
+    }
+    /// <summary>this function gets xp and use the checkIfLeveled function</summary>
+    void gainXp(int gainedXp)
+    {
+        currentXp += gainedXp;
+        while (checkIfLeveled())
+        {
+        }
+    }
+
+    // int getCurrentXp()
+    // {
+    //     return currentXp;
+    // }
+
+    // int getXpToLevelUp()
+    // {
+    //     return xpToLevelUp;
+    // }
+
+    // int getCurrentLevel()
+    // {
+    //     return currentLevel;
+    // }
+
+    // void setCurrentXp(int cXp)
+    // {
+    //     currentXp = cXp;
+    // }
+
+    // void setCurrentLevel(int cLevel)
+    // {
+    //     currentLevel = cLevel;
+    // }
+    /// <summary>this function must be override in other character classes</summary>
+    // virtual void levelUp() = 0;
+
+protected:
+    /// <summary> this function check the xp whit required xp to next level and increase the level</summary>
+    bool checkIfLeveled()
+    {
+        if (currentXp >= xpToLevelUp)
+        {
+            currentLevel++;
+            // levelUp();
+            xpToLevelUp += 50;
+            return true;
+        }
+        return false;
+    }
+};
+
+class Stamina
+{
+private:
+    int currentStamina;
+    int maxStamina;
+
+public:
+    Stamina()
+    {
+        currentStamina = 100;
+        maxStamina = 100;
+    }
+
+    int getCurrentStamina()
+    {
+        return currentStamina;
+    }
+
+    int getMaxStamina()
+    {
+        return maxStamina;
+    }
+    // Stamina(int currentStamina, int maxStamina)
+    // {
+    //     this->currentStamina = currentStamina;
+    //     this->maxStamina = maxStamina;
+    // }
+
+    /// <summary> this function use for change the max stamina </summary>
+    bool setMaxStamina(int newMaxStamina)
+    {
+        if (newMaxStamina < 1)
+        {
+            return false;
+        }
+
+        maxStamina = newMaxStamina;
+
+        if (currentStamina > maxStamina)
+        {
+            currentStamina = maxStamina;
+        }
+        return true;
+    }
+
+    /// <summary> this function receives damage and reduce the stamina </summary>
+    void reduceStamina(int number)
+    {
+        if (number >= currentStamina)
+        {
+            currentStamina = 0;
+            return;
+        }
+
+        currentStamina -= number;
+    }
+
+    /// <summary> this function receives heal and increase the stamina </summary>
+    void increaseStamina(int number)
+    {
+        if (currentStamina + number > maxStamina)
+        {
+            currentStamina = maxStamina;
+            return;
+        }
+
+        currentStamina += number;
+    }
+
+};
+// 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+class Person : public Hp, public Level, public Stamina
+{
+private:
+    int money;
+
+public:
+
     int getMoney()
     {
         return money;
@@ -279,24 +487,7 @@ public:
     {
         this->money = money;
     }
-    int getMaxHealthPoint()
-    {
-        return maxHealthPoint;
-    }
-    void setMaxHealthPoint(int maxHealthPoint)
-    {
-        this->maxHealthPoint = maxHealthPoint;
-    }
-    int getMaxStamina()
-    {
-        return maxStamina;
-    }
-    void setMaxStamina(int maxStamina)
-    {
-        this->maxStamina = maxStamina;
-    }
 };
-
 class Item
 {
 private:
@@ -343,10 +534,7 @@ protected:
     bool isUsed = 0;
 
 public:
-    ConsumableItem(string name, int size, int price, bool isUsed) : Item(name, size, price)
-    {
-        this->isUsed = isUsed;
-    }
+    ConsumableItem(string name, int size, int price) : Item(name, size, price){}
     bool getIsUsed()
     {
         return isUsed;
@@ -358,13 +546,14 @@ public:
 
     virtual void useItem(Person *player) = 0;
 };
+// for hp
 class Medicine : public ConsumableItem
 {
 private:
     int treatmentValue;
 
 public:
-    Medicine(string name, int size, int price, bool isUsed, int treatmentValue) : ConsumableItem(name, size, price, isUsed)
+    Medicine(string name, int size, int price, int treatmentValue) : ConsumableItem(name, size, price)
     {
         this->treatmentValue = treatmentValue;
     }
@@ -382,20 +571,22 @@ public:
         if (!isUsed)
         {
             // player->setMoney(player->getMoney() - getPrice());
-            player->setHealthPoint(player->getHeallthPoint() + treatmentValue);
+            player->heal(treatmentValue);
             isUsed = 1;
             return;
         }
         print("Sorry this item has already been used.\n", color_red, color_black);
     }
 };
+// for stamina
 class Food : public ConsumableItem
 {
 private:
+// stamina in item
     int staminaValue;
 
 public:
-    Food(string name, int size, int price, bool isUsed, int staminaValue) : ConsumableItem(name, size, price, isUsed)
+    Food(string name, int size, int price, int staminaValue) : ConsumableItem(name, size, price)
     {
         this->staminaValue = staminaValue;
     }
@@ -412,7 +603,7 @@ public:
     {
         if (!isUsed)
         {
-            player->setStamina(player->getStamina() + staminaValue);
+            player->increaseStamina(staminaValue);
             // player->setMoney(player->getMoney() - getPrice());
             isUsed = 1;
             return;
@@ -420,11 +611,14 @@ public:
         print("Sorry this item has already been used.\n", color_red, color_black);
     }
 };
-void printPlayerProperty(Person* player){
-    cout << "Money : " << player->getMoney() <<"\n";
-    cout << "HP : " << player->getHeallthPoint() << " / "<<player->getMaxHealthPoint()<< "\n";
-    cout << "Stamina : " << player->getStamina()<< " / "<<player->getMaxStamina()<< "\n\n";
+void printPlayerProperty(Person *player)
+{
+    cout << "Money : " << player->getMoney() << "\n";
+    cout << "HP : " << player->getCurrentHp() << " / " << player->getMaxHp() << "\n";
+    cout << "Stamina : " << player->getCurrentStamina() << " / " << player->getMaxStamina() << "\n\n";
 }
+
+
 
 int main()
 {
@@ -435,15 +629,13 @@ int main()
     cout << "\n";
 
     Person Ali;
-    Ali.setHealthPoint(14);
-    Ali.setMoney(170);
-    Ali.setStamina(12);
-    Ali.setMaxStamina(70);
-    Ali.setMaxHealthPoint(50);
+    Ali.takeDamage(40);
+    Ali.reduceStamina(50);
+
 
     printPlayerProperty(&Ali);
 
-    Medicine drug("drug", 1, 3, 0, 1);
+    Medicine drug("drug", 1, 3, 1);
     cout <<"using "<< drug.getName()<<" :\n";
     drug.useItem(&Ali);
     // drug.useItem(&Ali);
@@ -451,7 +643,7 @@ int main()
 
     printPlayerProperty(&Ali);
 
-    Medicine firstAidBox("first aid box", 1, 13, 0, 5);
+    Medicine firstAidBox("first aid box", 1, 13,  5);
     cout <<"using "<< firstAidBox.getName()<<" :\n";
     firstAidBox.useItem(&Ali);
     // firstAidBox.useItem(&Ali);
@@ -459,15 +651,15 @@ int main()
 
         printPlayerProperty(&Ali);
 
-    Medicine mandrake("mandrake",2,Ali.getMaxHealthPoint()*3*0.6,0,Ali.getMaxHealthPoint()-Ali.getHeallthPoint());
+    Medicine mandrake("mandrake",2,Ali.getMaxHp()*3*0.6,Ali.getMaxHp()-Ali.getCurrentHp());
     cout <<"using "<< mandrake.getName()<<" :\n";
-    mandrake.useItem(&Ali);   
+    mandrake.useItem(&Ali);
     // mandrake.useItem(&Ali);
     cout << "\n";
 
     printPlayerProperty(&Ali);
 
-    Food conserve("conserve", 1, 3, 0, 1);
+    Food conserve("conserve", 1, 3, 1);
     cout <<"using "<< conserve.getName()<<" :\n";
     conserve.useItem(&Ali);
     // conserve.useItem(&Ali);
@@ -475,7 +667,7 @@ int main()
 
     printPlayerProperty(&Ali);
 
-    Food meat("meat", 2, 13, 0, 5);
+    Food meat("meat", 2, 13,  5);
     cout <<"using "<< meat.getName()<<" :\n";
     meat.useItem(&Ali);
     // meat.useItem(&Ali);
@@ -483,11 +675,12 @@ int main()
 
     printPlayerProperty(&Ali);
 
-    Food  powerElixir ("power elixir", 2, Ali.getMaxStamina()*3*0.6, 0,Ali.getMaxStamina()-Ali.getStamina() );
+    Food  powerElixir ("power elixir", 2, Ali.getMaxStamina()*3*0.6, Ali.getMaxStamina()-Ali.getCurrentStamina() );
     cout <<"using "<< powerElixir.getName()<<" :\n";
-    powerElixir.useItem(&Ali);    
+    powerElixir.useItem(&Ali);
     // // mandrake.useItem(&Ali);
     cout << "\n";
 
         printPlayerProperty(&Ali);
 }
+
