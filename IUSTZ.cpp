@@ -597,6 +597,7 @@ public:
 class Character : public Hp, public Level // , public Stamina
 {
 private:
+    string type;
     string name;
     // int age;
     // string gender;
@@ -607,6 +608,14 @@ private:
     // int maxClothes = 2;
 
 public:
+    string getType()
+    {
+        return type;
+    }
+    void setType(string type)
+    {
+        this->type = type;
+    }
     string getName()
     {
         return name;
@@ -655,6 +664,10 @@ public:
     // {
     //     this->clothe = clothe;
     // }
+    Character()
+    {
+        setMoney(500);
+    }
 };
 
 class Human : public Character, public Stamina, public Bag
@@ -663,6 +676,7 @@ private:
     int age;
     string gender;
     string job;
+    Item *itemInHand;
 
 public:
     string getJob()
@@ -689,33 +703,103 @@ public:
     {
         this->gender = gender;
     }
+    Item *getItemInHand()
+    {
+        return itemInHand;
+    }
+    void setGender(Item *itemInHand)
+    {
+        this->itemInHand = itemInHand;
+    }
+    Human() : Character() {}
 };
 
 class Player : public Human
 {
 private:
-    // string weapon;
+    int skillLevelOfFirearm;
+    int skillLevelOfColdWeapon;
 
 public:
-    // string getWeapon(){
-    //     return weapon;
-    // }
-    // void setWeapon(string weapon){
-    //     this->weapon = weapon;
-    // }
+    int getSkillLevelOfFirearm()
+    {
+        return skillLevelOfFirearm;
+    }
+    void setSkillLevelOfFirearm(int skillLevelOfFirearm)
+    {
+        this->skillLevelOfFirearm = skillLevelOfFirearm;
+    }
+    int getSkillLevelOfColdWeapon()
+    {
+        return skillLevelOfColdWeapon;
+    }
+    void setSkillLevelOfColdWeapon(int skillLevelOfColdWeapon)
+    {
+        this->skillLevelOfColdWeapon = skillLevelOfColdWeapon;
+    }
+    Player() : Human()
+    {
+        setSkillLevelOfFirearm(1);
+        setSkillLevelOfColdWeapon(1);
+        setType("Player");
+    }
 };
 
 class HumanEnemy : public Human
 {
+    // fsm
+    HumanEnemy() : Human()
+    {
+        setType("HumanEnemy");
+    }
 };
 
 class Zombie : public Character
 {
+private:
+    int damage;
+
+public:
+    int getDamage() // Player voroodi begire
+    {
+        // bayad tabei az level zombie bashe
+        return damage;
+    }
+    void setDamage(int damage)
+    {
+        this->damage = damage;
+    }
+    Zombie() : Character()
+    {
+        setType("Zombie");
+    }
 };
 
 class StrongZombie : public Character
 {
+private:
+    int damage;
+    // Item dashte bashe ke damagesh ziad beshe
+public:
+    int getDamage() // Player voroodi begire
+    {
+        // bayad tabei az level zombie bashe
+        return damage;
+    }
+    void setDamage(int damage)
+    {
+        this->damage = damage;
+    }
+    StrongZombie() : Character()
+    {
+        setType("StrongZombie");
+    }
 };
+
+// class Xp
+// {
+
+// };
 // 111111111111111111111111111111111111111111111111111
 class ConsumableItem : public Item
 {
