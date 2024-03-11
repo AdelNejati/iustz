@@ -548,7 +548,22 @@ public:
     {
         this->bagSize = bagSize;
     }
+    void outputBagItems()
+    {
+        for (int i = 1; i <= bag.size(); i++)
+        {
+            cout<<i<<". "<<bag[i-1]->getName()<<" : "<<bag[i-1]->getPrice()<<"$\n";
+        }
+    }
+    Item* choosingItemFromBag()
+    {
+        outputBagItems();
+        cout<<"Enter number of item to use";
+        int i;
+        cin>>i;
+        return bag[i-1];
 
+    }
     void AddItemTOBag(Item *item)
     {
         bagSize += item->getSize();
@@ -558,7 +573,7 @@ public:
     {
         for (int i = 0; i < bag.size(); i++)
         {
-            cout << bag[i]->getName() << "\n";
+             print(bag[i]->getName()+ "\n",color_light_blue,color_black);
         }
     }
 };
@@ -760,7 +775,7 @@ class Drug : public Medicine
 public:
     Drug()
     {
-        setName("drug");
+        setName("Drug");
         setSize(1);
         setPrice(3);
         setTreatmentValue(1);
@@ -772,7 +787,7 @@ class FirstAidBox : public Medicine
 public:
     FirstAidBox()
     {
-        setName("first aid box");
+        setName("First Aid Box");
         setSize(1);
         setPrice(13);
         setTreatmentValue(5);
@@ -784,7 +799,7 @@ class Mandrake : public Medicine
 public:
     Mandrake(Player *player)
     {
-        setName("mandrake");
+        setName("Mandrake");
         setSize(2);
         setPrice(getPrice(player));
         setTreatmentValue(1000);
@@ -847,7 +862,7 @@ class Conserve : public Food
 public:
     Conserve()
     {
-        setName("conserve");
+        setName("Conserve");
         setSize(1);
         setPrice(3);
         setStaminaValue(1);
@@ -870,7 +885,7 @@ class PowerElixir : public Food
 public:
     PowerElixir(Player *player)
     {
-        setName("power elixir");
+        setName("Power Elixir");
         setSize(2);
         setPrice(getPrice(player));
         setStaminaValue(1000);
@@ -903,7 +918,7 @@ class Grenade : public ThrowableItem
 public:
     Grenade()
     {
-        setName("grenade");
+        setName("Grenade");
         setSize(2);
         setPrice(100);
     }
@@ -1066,8 +1081,12 @@ public:
     {
         if ((player->getMoney() - item->getPrice() < 0) || (player->getBagMaxSize() < player->getBagSize() + item->getSize()))
         {
-            cout << "You can`t buy this item."
-                 << "\n";
+             print("You can`t buy this item.\n",color_dark_red,color_black);
+            cout <<"Press any key to continue.\n";
+                 
+                         char q;
+        q = getch();
+
             return 0;
         }
         player->AddItemTOBag(item);
@@ -1114,27 +1133,6 @@ public:
         {
             cout<<i<<". "<<itemsInShop[i-1]->getName()<<" : "<<itemsInShop[i-1]->getPrice()<<"$\n";
         }
-        
-        // cout << "Wellcome to shop"
-        //      << "\n";
-        // cout << "Enter the number of item"
-        //      << "\n";
-        // cout << "Foods:"
-        //      << "\n";
-        // cout << "1.conserve"
-        //      << "\n";
-        // cout << "2.meat"
-        //      << "\n";
-        // cout << "3.power elixir"
-        //      << "\n";
-        // cout << "Medicine:"
-        //      << "\n";
-        // cout << "4.drug"
-        //      << "\n";
-        // cout << "5.first aid box"
-        //      << "\n";
-        // cout << "6.mandrake"
-        //      << "\n";
     }
 };
 void store(Player *player)
@@ -1147,10 +1145,26 @@ void store(Player *player)
     while (true)
     {
         clean();
-        cout << player->getMoney() << "\n";
+
+
+        cout <<"Your Money : "<< player->getMoney() << "\n";
+
+        cout <<"Your Bag`s size : "<< player->getBagSize()<<" / "<<player->getBagMaxSize() << "\n";
+
+        cout <<"Your items in Bag : "<< "\n";
         player->ItemsInBag();
+
+        cout <<"Items in Shop : "<< "\n";
         shop.outputShopItems();
-        cin >> num;
+
+                cout<<"If you want to leave the store press Backspace...\nPress any key to continue\n";
+        char q;
+        q = getch();
+        if(int(q)==8){
+            break;
+        }
+        cout <<"Enter number of item to buy"<< "\n";
+        cin>>num;
 
         if (num == 1)
         {
@@ -1223,13 +1237,6 @@ void store(Player *player)
             Stone *stone = new Stone;
             shop.buy(stone, player);
         }
-
-        // else if (num == 13)
-        // {
-        //     ColdWeapon *coldWeapon = new ColdWeapon;
-        //     shop.buy(coldWeapon, player);
-        // }
-
         else if (num == 13)
         {
             WoodenSword *woodenSword = new WoodenSword;
@@ -1247,12 +1254,7 @@ void store(Player *player)
             SamouraianSword *samouraianSword = new SamouraianSword;
             shop.buy(samouraianSword, player);
         }
-        cout<<"If you want to leave the store press Backspace...";
-        char q;
-        q = getch();
-        if(int(q)==8){
-            break;
-        }
+
         // cout<<int(q);
         // q = getch();8        
     }
@@ -1260,68 +1262,75 @@ void store(Player *player)
 
 int main()
 {
-    Player player;
-    player.setMoney(500);
-    store(&player);
-
-    exit(0);
-    Item bomb("BOMB", 2, 300);
-    cout << "name :" << bomb.getName() << "\n";
-    cout << "price :" << bomb.getPrice() << "\n";
-    cout << "size :" << bomb.getSize() << "\n";
-    cout << "\n";
-
     Player Ali;
     Ali.takeDamage(40);
     Ali.reduceStamina(50);
-
+    Ali.setMoney(500);
+    store(&Ali);
+    Ali.ItemsInBag();
+    // cout<<Ali.choosingItemFromBag()->getName();
+    
+    // (Drug*)Ali.choosingItemFromBag().;
+    Item* drug=Ali.choosingItemFromBag();
+    ConsumableItem* rug = (ConsumableItem*)drug; 
+    rug->useItem(&Ali);
     printPlayerProperty(&Ali);
+    // exit(0);
+    // Item bomb("BOMB", 2, 300);
+    // cout << "name :" << bomb.getName() << "\n";
+    // cout << "price :" << bomb.getPrice() << "\n";
+    // cout << "size :" << bomb.getSize() << "\n";
+    // cout << "\n";
 
-    Medicine drug("drug", 1, 3, 1);
-    cout << "using " << drug.getName() << " :\n";
-    drug.useItem(&Ali);
+    // // Player Ali;
+
+    // printPlayerProperty(&Ali);
+
+    // Medicine drug("drug", 1, 3, 1);
+    // cout << "using " << drug.getName() << " :\n";
     // drug.useItem(&Ali);
-    cout << "\n";
+    // // drug.useItem(&Ali);
+    // cout << "\n";
 
-    printPlayerProperty(&Ali);
+    // printPlayerProperty(&Ali);
 
-    Medicine firstAidBox("first aid box", 1, 13, 5);
-    cout << "using " << firstAidBox.getName() << " :\n";
-    firstAidBox.useItem(&Ali);
+    // Medicine firstAidBox("first aid box", 1, 13, 5);
+    // cout << "using " << firstAidBox.getName() << " :\n";
     // firstAidBox.useItem(&Ali);
-    cout << "\n";
+    // // firstAidBox.useItem(&Ali);
+    // cout << "\n";
 
-    printPlayerProperty(&Ali);
+    // printPlayerProperty(&Ali);
 
-    Medicine mandrake("mandrake", 2, Ali.getMaxHp() * 3 * 0.6, Ali.getMaxHp() - Ali.getCurrentHp());
-    cout << "using " << mandrake.getName() << " :\n";
-    mandrake.useItem(&Ali);
+    // Medicine mandrake("mandrake", 2, Ali.getMaxHp() * 3 * 0.6, Ali.getMaxHp() - Ali.getCurrentHp());
+    // cout << "using " << mandrake.getName() << " :\n";
     // mandrake.useItem(&Ali);
-    cout << "\n";
-
-    printPlayerProperty(&Ali);
-
-    Food conserve("conserve", 1, 3, 1);
-    cout << "using " << conserve.getName() << " :\n";
-    conserve.useItem(&Ali);
-    // conserve.useItem(&Ali);
-    cout << "\n";
-
-    printPlayerProperty(&Ali);
-
-    Food meat("meat", 2, 13, 5);
-    cout << "using " << meat.getName() << " :\n";
-    meat.useItem(&Ali);
-    // meat.useItem(&Ali);
-    cout << "\n";
-
-    printPlayerProperty(&Ali);
-
-    Food powerElixir("power elixir", 2, Ali.getMaxStamina() * 3 * 0.6, Ali.getMaxStamina() - Ali.getCurrentStamina());
-    cout << "using " << powerElixir.getName() << " :\n";
-    powerElixir.useItem(&Ali);
     // // mandrake.useItem(&Ali);
-    cout << "\n";
+    // cout << "\n";
 
-    printPlayerProperty(&Ali);
+    // printPlayerProperty(&Ali);
+
+    // Food conserve("conserve", 1, 3, 1);
+    // cout << "using " << conserve.getName() << " :\n";
+    // conserve.useItem(&Ali);
+    // // conserve.useItem(&Ali);
+    // cout << "\n";
+
+    // printPlayerProperty(&Ali);
+
+    // Food meat("meat", 2, 13, 5);
+    // cout << "using " << meat.getName() << " :\n";
+    // meat.useItem(&Ali);
+    // // meat.useItem(&Ali);
+    // cout << "\n";
+
+    // printPlayerProperty(&Ali);
+
+    // Food powerElixir("power elixir", 2, Ali.getMaxStamina() * 3 * 0.6, Ali.getMaxStamina() - Ali.getCurrentStamina());
+    // cout << "using " << powerElixir.getName() << " :\n";
+    // powerElixir.useItem(&Ali);
+    // // // mandrake.useItem(&Ali);
+    // cout << "\n";
+
+    // printPlayerProperty(&Ali);
 }
