@@ -456,15 +456,16 @@ public:
     }
 
     /// <summary> this function receives damage and reduce the stamina </summary>
-    void reduceStamina(int number)
+    bool reduceStamina(int number)
     {
         if (number >= currentStamina)
         {
             currentStamina = 0;
-            return;
+            return false;
         }
 
         currentStamina -= number;
+        return true;
     }
 
     /// <summary> this function receives heal and increase the stamina </summary>
@@ -589,7 +590,8 @@ public:
     Item *choosingItemFromBag()
     {
         ItemsInBag();
-        cout << "Enter number of item to use";
+        // cout << "Enter number of item to use";
+        print("Enter number of item to use <<( )>> " , 6);
         int i;
         cin >> i;
         Item *tempItem = bag[i - 1];
@@ -629,6 +631,7 @@ public:
             //         counter++;
             //     }
             // }
+            cout << "("<< i + 1 << ")...";
             print(bag[i]->getName() +"\n", color_light_blue, color_black);
         }
     }
@@ -768,7 +771,6 @@ public:
         return itemInHand;
     }
     void setItemInHand(Item *itemInHand)
-
     {
         this->itemInHand = itemInHand;
     }
@@ -1593,23 +1595,57 @@ bool useItem(Item* item,Player *player, Zombie *enemy){
 void attack(Player *player, Zombie *enemy)
 {
     // enum class fightOption { NONE, ATTACK, LOWHP, LOWSTAMINA};
+    /*
+    cout << '\n';
+    print(player->getName(), 3);
+    cout << "          ";
+    print("vs", 15);
+    cout << "          ";
+    print(enemy->getName(), 4);
+    cout << '\n';
+    */
+    print("\nplayer          ", 3);
+    print("vs", 15);
+    print("          enemy\n", 4);
+    print("\nlevel: ", 3);
+    cout << player->getCurrentLevel();
+    print("                    level: ", 4);
+    cout << enemy->getCurrentLevel() << '\n';
+    print("xp: ", 3);
+    cout << player->getCurrentXp();
+    print("                       xp worth: ", 4);
+    cout << enemy->getCurrentXp();
+    print("\nhp: ", 3);
+    cout << player->getCurrentHp();
+    print("/", 3);
+    cout << player->getMaxHp();
+    print("\t\t    hp: ", 4);
+    cout << enemy->getCurrentHp();
+    print("/", 3);
+    cout << enemy->getMaxHp() << '\n';
+    print("stamina: ", 3);
+    cout << player->getCurrentStamina();
+    print("/", 3);
+    cout << player->getMaxStamina() << '\n';
+    print("\nPress any key to select your items and start the fight <: :> \n\n", 14);
+    
+    int enterKey = _getch();
+    print("If you choose the permanent item, you must be attack! \n", 5);
+
     while (player->getCurrentHp() > 0 && enemy->getCurrentHp() > 0)
     {
         // fightOption actionTaken = fightOption::NONE;
         // char action = '\0';
         // while (actionTaken == fightOption::NONE)
         // {
-        int i = 0;
-        // clean();
-        cout << "\nplayer          vs          enemy\n"
-             << "\nplayer hp: " << player->getCurrentHp() << "/" << player->getMaxHp() << "\tenemy hp: " << enemy->getCurrentHp() << "/" << enemy->getMaxHp() << '\n';
+
         //      << "\naction(a:attack,h:lowHp,s:lowStamina)\n";
         // action = getchar();
         // switch (action)
         // {
         // case 'a':
         // actionTaken = fightOption::ATTACK;
-        cin >> i;
+        // cin >> i;
 
         while(1){
         Item *item = player->choosingItemFromBag();
@@ -1633,9 +1669,22 @@ void attack(Player *player, Zombie *enemy)
         //     break;
         // }
         // }
-        cout << "\nplayer          vs          enemy\n"
-             << "\nplayer hp: " << player->getCurrentHp() << "/" << player->getMaxHp() << "\tenemy hp: " << enemy->getCurrentHp() << "/" << enemy->getMaxHp() << '\n';
+        clean();
 
+
+        print("\nplayer hp: ", 3);
+        cout << player->getCurrentHp();
+        print("/", 3);
+        cout << player->getMaxHp();
+        print("\tenemy hp: ", 4);
+        cout << enemy->getCurrentHp();
+        print("/", 3);
+        cout << enemy->getMaxHp() << '\n';
+        print("player stamina: ", 3);
+        cout << player->getCurrentStamina();
+        print("/", 3);
+        cout << player->getMaxStamina() << '\n';
+       
         if (enemy->getCurrentHp() > 0)
         {
             // int damageWeTake = enemy.getMeleAttack();
@@ -1648,17 +1697,28 @@ void attack(Player *player, Zombie *enemy)
             player->takeDamage(3);
             // }
         }
-        cin >> i;
+        print("\nPress any key to select your items <: :> \n\n", 14);
+        enterKey = _getch();
     }
 
     if (player->getCurrentHp() > 0)
     {
-        cout << "\nyou won in the fight!\n";
-        // enemy.setXpWorth();
-
+        clean();
+        print("\n************* You won in the fight! *************\n", 5);
+        // player->checkIfLeveled();
         player->gainXp(enemy->getCurrentXp());
         player->gainMoney(enemy->getMoney());
-        cout << "\nxp gained: " << enemy->getCurrentXp();
+        print("\nxp gained: ", 10);
+        cout << enemy->getCurrentXp();
+        print("\nmoney gained: ", 10);
+        cout << enemy->getMoney();
+        print("\nplayer current level: ", 10);
+        cout << player->getCurrentLevel();
+        print("\nplayer current xp: ", 10);
+        cout << player->getCurrentXp();
+        print("\ncurrent xp / required xp to level up: ", 10);
+        cout << player->getCurrentXp() << "/" << player->getXpToLevelUp();
+
 
         /* here shoud creat an object with Item class and collocate items in backPack function that exist in Item class
         for example:
@@ -1669,7 +1729,7 @@ void attack(Player *player, Zombie *enemy)
         */
     }
 
-    cout << "\n Press Enter to Continue\n";
+    print("\n\n^^^^^Press Enter to Continue^^^^^ \n", 14);
     char a = getch();
 }
 
@@ -1736,6 +1796,7 @@ int main()
     // Player enemy;
     // enemy.setMaxHp(20);
     Ali.takeDamage(40);
+
     Ali.reduceStamina(50);
     Ali.setMoney(500);
     gameLoop(&Ali);
