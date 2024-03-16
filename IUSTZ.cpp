@@ -302,6 +302,10 @@ public:
     {
         return currentHp;
     }
+    void setCurrentHp(int currentHp)
+    {
+        this->currentHp =currentHp;
+    }
 
     /// <summary> this function receives heal and increase the hp </summary>
     void heal(int hp)
@@ -351,7 +355,7 @@ public:
     Level()
     {
         xpToLevelUp = 100;
-        this->currentXp = currentXp;
+        currentXp = 0;
         currentLevel = 1;
     }
     /// <summary>this function gets xp and use the checkIfLeveled function</summary>
@@ -398,6 +402,7 @@ protected:
         {
             currentLevel++;
             // levelUp(){}
+            currentXp=currentXp-xpToLevelUp;
             xpToLevelUp += 50;
             return true;
         }
@@ -485,7 +490,7 @@ private:
     int price;
     string disciption;
     string type;
-
+    bool isUsed=0;
 public:
     Item(string name, int size, int price)
     {
@@ -534,6 +539,14 @@ public:
     void setPrice(int price)
     {
         this->price = price;
+    }
+        bool getIsUsed()
+    {
+        return isUsed;
+    }
+    void setIsUsed(bool isUsed)
+    {
+        this->isUsed = isUsed;
     }
 };
 
@@ -586,13 +599,16 @@ public:
 
         return tempItem;
     }
-    void *deletItemFromBag(Item *item)
+    void deletItemFromBag(Item *item)
     {
         for (int i = 0; i < bag.size(); i++)
         {
-            if (bag[i]->getName() == item->getName())
+            
+            if (bag[i]->getName() == item->getName()&&bag[i]->getIsUsed())
             {
                 bag.erase(bag.begin() + i);
+                bagSize=bagSize-item->getSize();
+                return;
             }
         }
     }
@@ -606,7 +622,14 @@ public:
     {
         for (int i = 0; i < bag.size(); i++)
         {
-            print(bag[i]->getName() + "\n", color_light_blue, color_black);
+            // int counter=1;
+            // for (int j = i+1; j < bag.size(); j++)
+            // {
+            //     if(bag[i]->getName()==bag[j]->getName()){
+            //         counter++;
+            //     }
+            // }
+            print(bag[i]->getName() +"\n", color_light_blue, color_black);
         }
     }
 };
@@ -677,6 +700,10 @@ public:
     {
         return money;
     }
+    void gainMoney(int money)
+    {
+        this->money+= money;
+    }
     void setMoney(int money)
     {
         this->money = money;
@@ -740,7 +767,8 @@ public:
     {
         return itemInHand;
     }
-    void setGender(Item *itemInHand)
+    void setItemInHand(Item *itemInHand)
+
     {
         this->itemInHand = itemInHand;
     }
@@ -836,8 +864,6 @@ public:
 // 111111111111111111111111111111111111111111111111111
 class ConsumableItem : public Item
 {
-protected:
-    bool isUsed = 0;
 
 public:
     ConsumableItem(string name, int size, int price) : Item(name, size, price) {}
@@ -846,14 +872,7 @@ public:
         // type="kfv";
         setType("Consumable Item");
     }
-    bool getIsUsed()
-    {
-        return isUsed;
-    }
-    void setIsUsed(bool isUsed)
-    {
-        this->isUsed = isUsed;
-    }
+
 
     virtual void useItem(Player *player) = 0;
 };
@@ -868,7 +887,10 @@ public:
     {
         this->treatmentValue = treatmentValue;
     }
-    Medicine() {}
+    Medicine()
+    {
+        setType("Medicine");
+    }
 
     int getTreatmentValue()
     {
@@ -880,13 +902,13 @@ public:
     }
     void useItem(Player *player)
     {
-        if (!isUsed)
+        if (!getIsUsed())
         {
             // player->setMoney(player->getMoney() - getPrice());
             // cout << treatmentValue;
 
             player->heal(treatmentValue);
-            isUsed = 1;
+            setIsUsed (1);
             return;
         }
         print("Sorry this item has already been used.\n", color_red, color_black);
@@ -934,12 +956,12 @@ public:
     void useItem(Player *player)
     {
         setTreatmentValue(player->getMaxHp() - player->getCurrentHp());
-        if (!isUsed)
+        if (!getIsUsed())
         {
             // player->setMoney(player->getMoney() - getPrice());
             // cout << getTreatmentValue();
             player->heal(getTreatmentValue());
-            isUsed = 1;
+            setIsUsed(1) ;
             return;
         }
         print("Sorry this item has already been used.\n", color_red, color_black);
@@ -958,7 +980,10 @@ public:
     {
         this->staminaValue = staminaValue;
     }
-    Food() {}
+    Food()
+    {
+        setType("Food");
+    }
 
     int getStaminaValue()
     {
@@ -970,11 +995,11 @@ public:
     }
     void useItem(Player *player)
     {
-        if (!isUsed)
+        if (!getIsUsed())
         {
             player->increaseStamina(staminaValue);
             // player->setMoney(player->getMoney() - getPrice());
-            isUsed = 1;
+            setIsUsed(1);
             return;
         }
         print("Sorry this item has already been used.\n", color_red, color_black);
@@ -1020,12 +1045,12 @@ public:
     void useItem(Player *player)
     {
         setStaminaValue(player->getMaxStamina() - player->getCurrentStamina());
-        if (!isUsed)
+        if (!getIsUsed())
         {
             // player->setMoney(player->getMoney() - getPrice());
             // cout << getStaminaValue();
             player->increaseStamina(getStaminaValue());
-            isUsed = 1;
+            setIsUsed (1);
             return;
         }
         print("Sorry this item has already been used.\n", color_red, color_black);
@@ -1038,7 +1063,7 @@ public:
     {
         setType("Throwable Item");
     }
-    virtual void Throw(Player *player, Player *enemy) = 0;
+    virtual void Throw(Player *player, Zombie *enemy) = 0;
 };
 class Grenade : public ThrowableItem
 {
@@ -1049,10 +1074,11 @@ public:
         setSize(1);
         setPrice(100);
     }
-    void Throw(Player *player, Player *enemy)
+    void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
         enemy->takeDamage(10);
+                setIsUsed(1);
     }
 };
 class ThrowingKnife : public ThrowableItem
@@ -1064,10 +1090,10 @@ public:
         setSize(2);
         setPrice(30);
     }
-    void Throw(Player *player, Player *enemy)
+    void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
-        enemy->takeDamage(4);
+        enemy->takeDamage(4);        setIsUsed(1);
     }
 };
 class Stone : public ThrowableItem
@@ -1080,10 +1106,11 @@ public:
         setPrice(20);
     }
 
-    void Throw(Player *player, Player *enemy)
+    void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(2);
         enemy->takeDamage(3);
+        setIsUsed(1);
     }
 };
 class SleepingPoison : public ThrowableItem
@@ -1095,9 +1122,10 @@ public:
         setSize(1);
         setPrice(60);
     }
-    void Throw(Player *player, Player *enemy)
+    void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
+                setIsUsed(1);
         // we need a poisoning in Player
         // enemy->poisoning(20);
     }
@@ -1111,11 +1139,12 @@ public:
         setSize(1);
         setPrice(70);
     }
-    void Throw(Player *player, Player *enemy)
+    void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
         // we need a poisoning in Player
         enemy->takeDamage(7);
+                setIsUsed(1);
     }
 };
 class ZombiePoison : public ThrowableItem
@@ -1127,11 +1156,12 @@ public:
         setSize(2);
         setPrice(50);
     }
-    void Throw(Player *player, Player *enemy)
+    void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
         // we need if to customize damage based on enemy type;
         enemy->takeDamage(7);
+                setIsUsed(1);
     }
 };
 
@@ -1142,13 +1172,13 @@ public:
     {
         setType("Permanent Item");
     }
-    virtual void attack(Player *player, Player *enemy) = 0;
+    virtual void attack(Player *player, Zombie *enemy) = 0;
 };
 
 class ColdWeapon : public PermanentItem
 {
 public:
-    void attack(Player *player, Player *enemy) = 0;
+    void attack(Player *player, Zombie *enemy) = 0;
 };
 class WoodenSword : public ColdWeapon
 {
@@ -1159,7 +1189,7 @@ public:
         setSize(4);
         setPrice(150);
     }
-    void attack(Player *player, Player *enemy)
+    void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(3);
         enemy->takeDamage(4);
@@ -1174,7 +1204,7 @@ public:
         setSize(4);
         setPrice(400);
     }
-    void attack(Player *player, Player *enemy)
+    void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(3);
         enemy->takeDamage(7);
@@ -1189,7 +1219,7 @@ public:
         setSize(4);
         setPrice(100);
     }
-    void attack(Player *player, Player *enemy)
+    void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(2);
         enemy->takeDamage(17);
@@ -1204,7 +1234,7 @@ public:
         setSize(5);
         setPrice(300);
     }
-    void attack(Player *player, Player *enemy)
+    void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(4);
         enemy->takeDamage(5);
@@ -1219,7 +1249,7 @@ public:
         setSize(3);
         setPrice(400);
     }
-    void attack(Player *player, Player *enemy)
+    void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(4);
         enemy->takeDamage(6);
@@ -1228,7 +1258,7 @@ public:
 class Firearms : public PermanentItem
 {
 public:
-    void attack(Player *player, Player *enemy) = 0;
+    void attack(Player *player, Zombie *enemy) = 0;
 };
 class Colt : public Firearms
 {
@@ -1239,7 +1269,7 @@ public:
         setSize(2);
         setPrice(700);
     }
-    void attack(Player *player, Player *enemy)
+    void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
         enemy->takeDamage(10);
@@ -1384,6 +1414,8 @@ void outputStore(Player *player, Shop shop)
     clean();
 
     cout << "Money : " << player->getMoney() << " $ \n\n";
+    cout << "Level : " << player->getCurrentLevel() << "\n\n";
+    cout << "XP : " << player->getCurrentXp() << " / " << player->getXpToLevelUp() << "\n\n";
     cout << "HP : " << player->getCurrentHp() << " / " << player->getMaxHp() << "\n\n";
     cout << "Stamina : " << player->getCurrentStamina() << " / " << player->getMaxStamina() << "\n\n";
 
@@ -1408,15 +1440,20 @@ void store(Player *player)
     int num = 0;
     while (true)
     {
+
         outputStore(player, shop);
         print("If you want to leave the store press Backspace...\nPress any key to continue\n", color_orange, color_black);
+        int line = 1;
+
         char q;
         q = getch();
+
         if (int(q) == 8)
         {
             break;
         }
-        cout << "Enter number of item to buy"<< "\n";
+        cout << "Enter number of item to buy"
+             << "\n";
 
         cin >> num;
 
@@ -1520,8 +1557,40 @@ void store(Player *player)
 }
 // void
 
+// 4444444444444444444444444444444444444444444
+bool useItem(Item* item,Player *player, Zombie *enemy){
+        if (item->getType() == "Medicine")
+        {
+
+            Medicine *medicine = (Medicine *)item;
+            medicine->useItem(player);
+            player->deletItemFromBag(medicine);
+            return 0;
+        }
+        if (item->getType() == "Food")
+        {
+            Food *food = (Food *)item;
+            food->useItem(player);
+            player->deletItemFromBag(food);
+            return 0;
+        }
+        if (item->getType() == "Throwable Item")
+        {
+            ThrowableItem *throwableItem = (ThrowableItem *)item;
+            throwableItem->Throw(player, enemy);
+            player->deletItemFromBag(throwableItem);
+            return 0;
+        }
+        if (item->getType() == "Permanent Item")
+        {
+            PermanentItem *permanentItem = (PermanentItem *)item;
+            permanentItem->attack(player, enemy);
+            return 1;
+        }
+}
+// 4444444444444444444444444444444444444444444
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
-void attack(Player *player, Player *enemy)
+void attack(Player *player, Zombie *enemy)
 {
     // enum class fightOption { NONE, ATTACK, LOWHP, LOWSTAMINA};
     while (player->getCurrentHp() > 0 && enemy->getCurrentHp() > 0)
@@ -1532,7 +1601,8 @@ void attack(Player *player, Player *enemy)
         // {
         int i = 0;
         // clean();
-        cout << "\nplayer          vs          enemy\n"<< "\nplayer hp: " << player->getCurrentHp() << "/" << player->getMaxHp() << "\tenemy hp: " << enemy->getCurrentHp() << "/" << enemy->getMaxHp() << '\n';
+        cout << "\nplayer          vs          enemy\n"
+             << "\nplayer hp: " << player->getCurrentHp() << "/" << player->getMaxHp() << "\tenemy hp: " << enemy->getCurrentHp() << "/" << enemy->getMaxHp() << '\n';
         //      << "\naction(a:attack,h:lowHp,s:lowStamina)\n";
         // action = getchar();
         // switch (action)
@@ -1540,8 +1610,14 @@ void attack(Player *player, Player *enemy)
         // case 'a':
         // actionTaken = fightOption::ATTACK;
         cin >> i;
-        PermanentItem *permanentItem = (PermanentItem *)player->choosingItemFromBag();
-        permanentItem->attack(player, enemy);
+
+        while(1){
+        Item *item = player->choosingItemFromBag();
+            if(useItem(item,player,enemy)){
+                break;
+            }
+        }
+
         //     break;
         // case 'h':
         // actionTaken = fightOption::LOWHP;
@@ -1580,9 +1656,9 @@ void attack(Player *player, Player *enemy)
         cout << "\nyou won in the fight!\n";
         // enemy.setXpWorth();
 
-        player->gainXp(20);
-
-        cout << "\nxp gained: " << /*enemy.getXpWorth() */ 20;
+        player->gainXp(enemy->getCurrentXp());
+        player->gainMoney(enemy->getMoney());
+        cout << "\nxp gained: " << enemy->getCurrentXp();
 
         /* here shoud creat an object with Item class and collocate items in backPack function that exist in Item class
         for example:
@@ -1598,29 +1674,85 @@ void attack(Player *player, Player *enemy)
 }
 
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
+// 333333333333333333333333333333333333333333333333333333333333333333333333333333
+int nadjafikhah(int peymane){
+
+
+    return rand()%peymane;
+}
+Zombie enemyFactory(Player *player){
+    Zombie zombie;
+    zombie.setDamage(10);
+    zombie.setMoney(120);
+    zombie.setCurrentHp(28);
+    zombie.setMaxHp(28);
+    zombie.setDamage(player->getCurrentLevel() *3*(nadjafikhah(240)+80)/100);
+    zombie.setMoney(player->getCurrentLevel()*50*(nadjafikhah(40)+80)/100);
+    zombie.setCurrentHp(player->getCurrentLevel()*15*(nadjafikhah(60)+80)/100);
+    zombie.setMaxHp(zombie.getCurrentHp());
+    zombie.gainXp(player->getCurrentLevel()*10*(nadjafikhah(40)+80)/100);
+    // zombie.(zombie.getCurrentHp());
+    // cout<<zombie->getCurrentHp();
+    // cout<<"\n";
+    // cout<<zombie->getDamage();
+    //     cout<<"\n";
+    // cout<<zombie->getMoney();
+    //     cout<<"\n";
+    // cout<<zombie->getMaxHp();
+    //     cout<<"\n";
+        // cout<<
+
+    return zombie;
+}
+void gameLoop(Player *player){
+    while(true){
+        int diceNumber=nadjafikhah(100);
+        if(diceNumber<60){
+            store(player);
+
+        }
+        else /*if(diceNumber>=60&&diceNumber<100)*/{
+            Zombie enemy=enemyFactory(player);
+            attack(player,&enemy);
+        }
+
+    }
+}
+
+
+
+
+
+
+
+
+// 333333333333333333333333333333333333333333333333333333333333333333333333333333
 
 int main()
 {
+    srand(time(0));
+
     Player Ali;
-    Player enemy;
-    enemy.setMaxHp(20);
+    // Player enemy;
+    // enemy.setMaxHp(20);
     Ali.takeDamage(40);
     Ali.reduceStamina(50);
     Ali.setMoney(500);
-    store(&Ali);
-    attack(&Ali, &enemy);
-    store(&Ali);
-    for (int i = 0; i < 10; i++)
-    {
-        Ali.ItemsInBag();
-        // cout<<Ali.choosingItemFromBag()->getName();
-        printPlayerProperty(&Ali);
-        // (Drug*)Ali.choosingItemFromBag().;
-        Item *item = Ali.choosingItemFromBag();
-        ConsumableItem *consumableItem = (ConsumableItem *)item;
-        consumableItem->useItem(&Ali);
-        printPlayerProperty(&Ali);
-    }
+    gameLoop(&Ali);
+    // store(&Ali);
+    // attack(&Ali, &enemy);
+    // store(&Ali);
+    // for (int i = 0; i < 10; i++)
+    // {
+    //     Ali.ItemsInBag();
+    //     // cout<<Ali.choosingItemFromBag()->getName();
+    //     printPlayerProperty(&Ali);
+    //     // (Drug*)Ali.choosingItemFromBag().;
+    //     Item *item = Ali.choosingItemFromBag();
+    //     ConsumableItem *consumableItem = (ConsumableItem *)item;
+    //     consumableItem->useItem(&Ali);
+    //     printPlayerProperty(&Ali);
+    // }
 
     // exit(0);
     // Item bomb("BOMB", 2, 300);
