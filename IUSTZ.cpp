@@ -759,24 +759,38 @@ public:
     }
 };
 
-class ItemInHand
+class ItemInHand : public Bag
 {
 private:
-    string itemInHand;
+    Item *itemInHand;
     bool isItemInHand = 0;
 
 public:
-    void setItemInHand(string itemInHand)
+    void setItemInHand(Item *itemInHand)
     {
         this->itemInHand = itemInHand;
         isItemInHand = 1;
     }
-    string getItemInHand()
+    Item *getItemInHand()
     {
         return itemInHand;
     }
-    void changeItemInHand(string itemInHand)
+    void changeItemInHand(Item *itemInHand)
     {
+        Item *itemInBag = choosingItemFromBag();
+        if (itemInHand->getSize() > itemInBag->getSize())
+        {
+            if(itemInHand->getSize() - itemInBag->getSize() <= getBagMaxSize() - getBagSize())
+            {
+                setBagSize(getBagSize() + (itemInHand->getSize() - itemInBag->getSize()));
+                this->itemInHand = itemInHand;
+                AddItemTOBag(itemInHand);
+            }
+            else
+            {
+                cout << "The bag has no capacity";
+            }
+        }
         this->itemInHand = itemInHand;
     }
 };
