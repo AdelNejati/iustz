@@ -1452,6 +1452,7 @@ void store(Player *player)
 
         if (int(q) == 8)
         {
+            clean();
             break;
         }
         cout << "Enter number of item to buy"
@@ -1594,96 +1595,207 @@ bool useItem(Item* item,Player *player, Zombie *enemy){
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
 void attack(Player *player, Zombie *enemy)
 {
-    // enum class fightOption { NONE, ATTACK, LOWHP, LOWSTAMINA};
+    // *************************change this for time that creat getName function****************************************
     /*
     cout << '\n';
     print(player->getName(), 3);
-    cout << "          ";
-    print("vs", 15);
-    cout << "          ";
-    print(enemy->getName(), 4);
+    string output = player->getName();
+    for (int i = 0; i < 15 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Vs", 15);
+    for (int i = 0; i < 13 - output.size(); i++)
+    {
+        cout << " ";
+    }
     cout << '\n';
+    print(enemy->getName(), 4);
     */
-    print("\nplayer          ", 3);
-    print("vs", 15);
-    print("          enemy\n", 4);
-    print("\nlevel: ", 3);
+
+    print("\nPlayer", 3);
+    string output = player->getName();
+    for (int i = 0; i < 15 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Vs", 15);
+    for (int i = 0; i < 13 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Enemy\n", 4);
+
+    print("\nLevel: ", 3);
     cout << player->getCurrentLevel();
-    print("                    level: ", 4);
-    cout << enemy->getCurrentLevel() << '\n';
-    print("xp: ", 3);
+    output = "Level: " + to_string(player->getCurrentLevel());
+    for (int i = 0; i < 36 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Level: ", 4);
+    cout << enemy->getCurrentLevel();
+
+    print("\nXp: ", 3);
     cout << player->getCurrentXp();
-    print("                       xp worth: ", 4);
+    output = "Xp: " + to_string(player->getCurrentXp());
+    for (int i = 0; i < 36 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Xp worth: ", 4);
     cout << enemy->getCurrentXp();
-    print("\nhp: ", 3);
+
+    print("\nHp: ", 3);
     cout << player->getCurrentHp();
     print("/", 3);
     cout << player->getMaxHp();
-    print("\t\t    hp: ", 4);
+    output = "Hp: " + to_string(player->getCurrentHp()) + "/" + to_string(player->getMaxHp());
+    for (int i = 0; i < 36 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Hp: ", 4);
     cout << enemy->getCurrentHp();
     print("/", 3);
-    cout << enemy->getMaxHp() << '\n';
-    print("stamina: ", 3);
+    cout << enemy->getMaxHp();
+
+    print("\nStamina: ", 3);
     cout << player->getCurrentStamina();
     print("/", 3);
-    cout << player->getMaxStamina() << '\n';
-    print("\nPress any key to select your items and start the fight <: :> \n\n", 14);
+    cout << player->getMaxStamina();
+    output = "Stamina: " + to_string(player->getCurrentStamina()) + "/" + to_string(player->getMaxStamina());
+    for (int i = 0; i < 36 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Money: ", 4);
+    cout << enemy->getMoney() << '\n';
+
     
-    int enterKey = _getch();
-    print("If you choose the permanent item, you must be attack! \n", 5);
+    // int enterKey = _getch();
 
     while (player->getCurrentHp() > 0 && enemy->getCurrentHp() > 0)
     {
-        // fightOption actionTaken = fightOption::NONE;
-        // char action = '\0';
-        // while (actionTaken == fightOption::NONE)
-        // {
+        print("\nPress any key to Continue <::>  \n", 6);
+        int getKey = _getch();
+        print("\nIf you want to use the items in your bag, press ", 5);
+        print("Right key ", 6);
+        print("<<( )>> ", 5);
+        print("\nIf you want to use the skill points, press ", 5);
+        print("left key ", 6);
+        print("<<( )>> ", 5);
+        print("\nIf you want to attack, press ", 5);
+        print("Enter key ", 6);
+        print("<<( )>> ", 5);
+        print("\nIf you choose the permanent item, you must be attack! \n", 5);
+        print("\nSelect your key <: :> \n", 14);
+        
+        int q = _getch();
 
-        //      << "\naction(a:attack,h:lowHp,s:lowStamina)\n";
-        // action = getchar();
-        // switch (action)
-        // {
-        // case 'a':
-        // actionTaken = fightOption::ATTACK;
-        // cin >> i;
-
-        while(1){
-        Item *item = player->choosingItemFromBag();
-            if(useItem(item,player,enemy)){
-                break;
+        switch (q)
+        {
+        case 77:
+            while(1)
+            {
+                Item *item = player->choosingItemFromBag();
+                if(useItem(item,player,enemy)){
+                    break;
+                }
             }
+            break;
+        case 75:
+            break;
+        case 13:
+            while(1)
+            {
+                Item *item = player->choosingItemFromBag();
+                if(useItem(item,player,enemy)){
+                    break;
+                }
+            }
+            break;
+        default:
+            break;
         }
-
-        //     break;
-        // case 'h':
-        // actionTaken = fightOption::LOWHP;
-        // cout << "\nhp of player is low!\n you can use your food item";
-        // player.heal(30);
-        //     break;
-        // case 's':
-        // actionTaken = fightOption::LOWSTAMINA;
-        // cout << "\n your stamina is low!";
-        // player.increaseStamina(20);
-        //     break;
-        // default:
-        //     break;
-        // }
-        // }
         clean();
 
 
-        print("\nplayer hp: ", 3);
+        // *************************change this for time that creat getName function****************************************
+        /*
+        cout << '\n';
+        print(player->getName(), 3);
+        string output = player->getName();
+        for (int i = 0; i < 15 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Vs", 15);
+        for (int i = 0; i < 13 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        cout << '\n';
+        print(enemy->getName(), 4);
+        */
+        print("\nPlayer", 3);
+        string output = player->getName();
+        for (int i = 0; i < 15 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Vs", 15);
+        for (int i = 0; i < 13 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Enemy\n", 4);
+
+        print("\nLevel: ", 3);
+        cout << player->getCurrentLevel();
+        output = "Level: " + to_string(player->getCurrentLevel());
+        for (int i = 0; i < 36 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Level: ", 4);
+        cout << enemy->getCurrentLevel();
+
+        print("\nXp: ", 3);
+        cout << player->getCurrentXp();
+        output = "Xp: " + to_string(player->getCurrentXp());
+        for (int i = 0; i < 36 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Xp worth: ", 4);
+        cout << enemy->getCurrentXp();
+
+        print("\nHp: ", 3);
         cout << player->getCurrentHp();
         print("/", 3);
         cout << player->getMaxHp();
-        print("\tenemy hp: ", 4);
+        output = "Hp: " + to_string(player->getCurrentHp()) + "/" + to_string(player->getMaxHp());
+        for (int i = 0; i < 36 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Hp: ", 4);
         cout << enemy->getCurrentHp();
         print("/", 3);
-        cout << enemy->getMaxHp() << '\n';
-        print("player stamina: ", 3);
+        cout << enemy->getMaxHp();
+
+        print("\nStamina: ", 3);
         cout << player->getCurrentStamina();
         print("/", 3);
-        cout << player->getMaxStamina() << '\n';
+        cout << player->getMaxStamina();
+        output = "Stamina: " + to_string(player->getCurrentStamina()) + "/" + to_string(player->getMaxStamina());
+        for (int i = 0; i < 36 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Money: ", 4);
+        cout << enemy->getMoney() << '\n';
        
         if (enemy->getCurrentHp() > 0)
         {
@@ -1697,40 +1809,50 @@ void attack(Player *player, Zombie *enemy)
             player->takeDamage(3);
             // }
         }
-        print("\nPress any key to select your items <: :> \n\n", 14);
-        enterKey = _getch();
+        // print("\nPress any key to select your items <: :> \n\n", 14);
+        // int enterKey = _getch();
     }
 
     if (player->getCurrentHp() > 0)
     {
         clean();
         print("\n************* You won in the fight! *************\n", 5);
-        // player->checkIfLeveled();
         player->gainXp(enemy->getCurrentXp());
         player->gainMoney(enemy->getMoney());
         print("\nxp gained: ", 10);
         cout << enemy->getCurrentXp();
-        print("\nmoney gained: ", 10);
-        cout << enemy->getMoney();
-        print("\nplayer current level: ", 10);
-        cout << player->getCurrentLevel();
-        print("\nplayer current xp: ", 10);
-        cout << player->getCurrentXp();
         print("\ncurrent xp / required xp to level up: ", 10);
         cout << player->getCurrentXp() << "/" << player->getXpToLevelUp();
+        print("\nplayer current level: ", 10);
+        cout << player->getCurrentLevel();
+        print("\nmoney gained: ", 10);
+        cout << enemy->getMoney();
+        print("\nplayer current hp: ", 10);
+        cout << player->getCurrentHp() << '/' << player->getMaxHp();
+        print("\nplayer current stamina: ", 10);
+        cout << player->getCurrentStamina() << '/' << player->getMaxStamina();
 
-
-        /* here shoud creat an object with Item class and collocate items in backPack function that exist in Item class
-        for example:
-        advice to create a default constractor for Item class
-        Item itemDrop;
-        Item::backPack(itemDrop, &player.getName());
-        cout << "\n item recieved: " << itemDrop.getName() << '\n';
-        */
     }
-
-    print("\n\n^^^^^Press Enter to Continue^^^^^ \n", 14);
+    else
+    {
+        clean();
+        print("\n############ You lost the fight! ############\n", 10);
+        print("\nxp gained: ", 10);
+        cout << 0;
+        print("\ncurrent xp / required xp to level up: ", 10);
+        cout << player->getCurrentXp() << "/" << player->getXpToLevelUp();
+        print("\nplayer current level: ", 10);
+        cout << player->getCurrentLevel();
+        print("\nmoney gained: ", 10);
+        cout << 0;
+        print("\nplayer current hp: ", 10);
+        cout << player->getCurrentHp() << '/' << player->getMaxHp();
+        print("\nplayer current stamina: ", 10);
+        cout << player->getCurrentStamina() << '/' << player->getMaxStamina();
+    }
+    print("\n\n^^^^^^^^^^^^ Press any key to Continue ^^^^^^^^^^^^^ \n", 14);
     char a = getch();
+    clean();
 }
 
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
@@ -1800,6 +1922,37 @@ int main()
     Ali.reduceStamina(50);
     Ali.setMoney(500);
     gameLoop(&Ali);
+
+    // Player *player;
+    // Zombie *enemy;
+
+    // print("\nplayer", 3);
+    // cout << setw(15);
+    // print("vs", 15);
+    // cout << setw(20);
+    // print("enemy\n", 4);
+    // print("\nlevel: ", 3);
+    // cout << player->getCurrentLevel();
+    // print("                    level: ", 4);
+    // cout << enemy->getCurrentLevel() << '\n';
+    // print("xp: ", 3);
+    // cout << player->getCurrentXp();
+    // print("                       xp worth: ", 4);
+    // cout << enemy->getCurrentXp();
+    // print("\nhp: ", 3);
+    // cout << player->getCurrentHp();
+    // print("/", 3);
+    // cout << player->getMaxHp();
+    // print("\t\t    hp: ", 4);
+    // cout << enemy->getCurrentHp();
+    // print("/", 3);
+    // cout << enemy->getMaxHp() << '\n';
+    // print("stamina: ", 3);
+    // cout << player->getCurrentStamina();
+    // print("/", 3);
+    // cout << player->getMaxStamina() << '\n';
+
+
     // store(&Ali);
     // attack(&Ali, &enemy);
     // store(&Ali);
