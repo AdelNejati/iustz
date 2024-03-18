@@ -456,15 +456,16 @@ public:
     }
 
     /// <summary> this function receives damage and reduce the stamina </summary>
-    void reduceStamina(int number)
+    bool reduceStamina(int number)
     {
         if (number >= currentStamina)
         {
             currentStamina = 0;
-            return;
+            return false;
         }
 
         currentStamina -= number;
+        return true;
     }
 
     /// <summary> this function receives heal and increase the stamina </summary>
@@ -599,7 +600,8 @@ public:
     Item *choosingItemFromBag()
     {
         ItemsInBag();
-        cout << "Enter number of item to use";
+        // cout << "Enter number of item to use";
+        print("Enter number of item to use <<( )>> ", 6);
         int i;
         cin >> i;
         Item *tempItem = bag[i - 1];
@@ -639,11 +641,10 @@ public:
             //         counter++;
             //     }
             // }
-<<<<<<< Updated upstream
-            print(bag[i]->getName() +"\n", color_light_blue, color_black);
-=======
+
+            cout << "(" << i + 1 << ")...";
+
             print(bag[i]->getName() + "\n", color_light_blue, color_black);
->>>>>>> Stashed changes
         }
     }
 };
@@ -882,13 +883,11 @@ public:
     ConsumableItem(string name, int size, int price) : Item(name, size, price) {}
     ConsumableItem()
     {
-        // type="kfv";
         setType("Consumable Item");
     }
 
     virtual void useItem(Player *player) = 0;
 };
-// for hp
 class Medicine : public ConsumableItem
 {
 private:
@@ -1074,6 +1073,35 @@ public:
         print("Sorry this item has already been used.\n", color_red, color_black);
     }
 };
+class MysteriousPotion : public Food
+{
+public:
+    MysteriousPotion(Player *player)
+    {
+        setName("Mysterious Potion");
+        setSize(2);
+        setPrice(400);
+        setStaminaValue(player->getMaxStamina());
+        setUnlockLevel(5);
+    }
+    int getPrice(Player *player)
+    {
+        return player->getMaxStamina() * 3 * 0.6;
+    }
+    void useItem(Player *player)
+    {
+        setStaminaValue(player->getMaxStamina() - player->getCurrentStamina());
+        if (!getIsUsed())
+        {
+            player->increaseStamina(100);
+            player->heal(100);
+            setIsUsed(1);
+            return;
+        }
+        print("Sorry this item has already been used.\n", color_red, color_black);
+    }
+};
+
 class ThrowableItem : public Item
 {
 public:
@@ -1090,13 +1118,13 @@ public:
     {
         setName("Grenade");
         setSize(1);
-        setPrice(100);
+        setPrice(2000);
         setUnlockLevel(5);
     }
     void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
-        enemy->takeDamage(20);
+        enemy->takeDamage(170);
         setIsUsed(1);
     }
 };
@@ -1107,13 +1135,13 @@ public:
     {
         setName("Throwing Knife");
         setSize(2);
-        setPrice(30);
+        setPrice(100);
         setUnlockLevel(1);
     }
     void Throw(Player *player, Zombie *enemy)
     {
-        player->reduceStamina(1);
-        enemy->takeDamage(4);
+        player->reduceStamina(2);
+        enemy->takeDamage(17);
         setIsUsed(1);
     }
 };
@@ -1123,16 +1151,16 @@ public:
     Stone()
     {
         setName("Stone");
-        setSize(2);
-        setPrice(20);
+        setSize(3);
+        setPrice(40);
         setUnlockLevel(1);
         setDisciption("hww");
     }
 
     void Throw(Player *player, Zombie *enemy)
     {
-        player->reduceStamina(2);
-        enemy->takeDamage(3);
+        player->reduceStamina(4);
+        enemy->takeDamage(8);
         setIsUsed(1);
     }
 };
@@ -1161,14 +1189,13 @@ public:
     {
         setName("Deadly Poison");
         setSize(1);
-        setPrice(70);
-        setUnlockLevel(3);
+        setPrice(1000);
+        setUnlockLevel(5);
     }
     void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
-        // we need a poisoning in Player
-        enemy->takeDamage(7);
+        enemy->takeDamage(100);
         setIsUsed(1);
     }
 };
@@ -1179,22 +1206,59 @@ public:
     {
         setName("Zombie Poison");
         setSize(1);
-        setPrice(50);
+        setPrice(100);
         setUnlockLevel(2);
     }
     void Throw(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
-        // we need if to customize damage based on enemy type;
-        if (enemy->getType() == "zombie")
+        if (enemy->getType() == "Zombie")
         {
 
-            enemy->takeDamage(7);
+            enemy->takeDamage(25);
         }
         else
         {
-            enemy->takeDamage(4);
+            enemy->takeDamage(9);
         }
+        setIsUsed(1);
+    }
+};
+class Shuriken : public ThrowableItem
+{
+public:
+    Shuriken()
+    {
+        setName("Shuriken");
+        setSize(2);
+        setPrice(500);
+        setUnlockLevel(4);
+    }
+    void Throw(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(1);
+        // we need if to customize damage based on enemy type;
+
+        enemy->takeDamage(70);
+        setIsUsed(1);
+    }
+};
+class HomemadeBomb : public ThrowableItem
+{
+public:
+    HomemadeBomb()
+    {
+        setName("Homemade Bomb");
+        setSize(1);
+        setPrice(200);
+        setUnlockLevel(3);
+    }
+    void Throw(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(1);
+        // we need if to customize damage based on enemy type;
+
+        enemy->takeDamage(30);
         setIsUsed(1);
     }
 };
@@ -1214,20 +1278,36 @@ class ColdWeapon : public PermanentItem
 public:
     void attack(Player *player, Zombie *enemy) = 0;
 };
+class Wood : public ColdWeapon
+{
+public:
+    Wood()
+    {
+        setName("Wood");
+        setSize(4);
+        setPrice(100);
+        setUnlockLevel(1);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(4);
+        enemy->takeDamage(4);
+    }
+};
 class WoodenSword : public ColdWeapon
 {
 public:
     WoodenSword()
     {
         setName("Wooden Sword");
-        setSize(4);
-        setPrice(150);
+        setSize(3);
+        setPrice(300);
         setUnlockLevel(1);
     }
     void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(3);
-        enemy->takeDamage(4);
+        enemy->takeDamage(7);
     }
 };
 class SteelSword : public ColdWeapon
@@ -1237,13 +1317,13 @@ public:
     {
         setName("Steel Sword");
         setSize(4);
-        setPrice(400);
-        setUnlockLevel(2);
+        setPrice(700);
+        setUnlockLevel(4);
     }
     void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(3);
-        enemy->takeDamage(7);
+        enemy->takeDamage(11);
     }
 };
 class SamouraianSword : public ColdWeapon
@@ -1253,8 +1333,8 @@ public:
     {
         setName("Samouraian Sword");
         setSize(4);
-        setPrice(100);
-        setUnlockLevel(3);
+        setPrice(1500);
+        setUnlockLevel(5);
     }
     void attack(Player *player, Zombie *enemy)
     {
@@ -1269,13 +1349,13 @@ public:
     {
         setName("Bow");
         setSize(5);
-        setPrice(600);
-        setUnlockLevel(2);
+        setPrice(500);
+        setUnlockLevel(3);
     }
     void attack(Player *player, Zombie *enemy)
     {
-        player->reduceStamina(4);
-        enemy->takeDamage(8);
+        player->reduceStamina(5);
+        enemy->takeDamage(13);
     }
 };
 class Nunchaku : public ColdWeapon
@@ -1286,12 +1366,60 @@ public:
         setName("Nunchaku");
         setSize(3);
         setPrice(1000);
-        setUnlockLevel(4);
+        setUnlockLevel(5);
     }
     void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(4);
-        enemy->takeDamage(15);
+        enemy->takeDamage(21);
+    }
+};
+class Knife : public ColdWeapon
+{
+public:
+    Knife()
+    {
+        setName("Knife");
+        setSize(2);
+        setPrice(800);
+        setUnlockLevel(2);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(2);
+        enemy->takeDamage(9);
+    }
+};
+class Spear : public ColdWeapon
+{
+public:
+    Spear()
+    {
+        setName("Spear");
+        setSize(5);
+        setPrice(4000);
+        setUnlockLevel(6);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(5);
+        enemy->takeDamage(41);
+    }
+};
+class AncientSword : public ColdWeapon
+{
+public:
+    AncientSword()
+    {
+        setName("AncientSword");
+        setSize(4);
+        setPrice(4000);
+        setUnlockLevel(6);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(2);
+        enemy->takeDamage(32);
     }
 };
 class Firearms : public PermanentItem
@@ -1306,31 +1434,96 @@ public:
     {
         setName("Colt");
         setSize(2);
-        setPrice(1500);
+        setPrice(3000);
         setUnlockLevel(5);
     }
     void attack(Player *player, Zombie *enemy)
     {
         player->reduceStamina(1);
-        enemy->takeDamage(20);
+        enemy->takeDamage(21);
     }
 };
 
-// class Colt : public Firearms
-// {
-// public:
-//     Colt()
-//     {
-//         setName("Colt");
-//         setSize(2);
-//         setPrice(700);
-//     }
-//     void attack(Player *player, Player *enemy)
-//     {
-//         player->reduceStamina(1);
-//         enemy->takeDamage(10);
-//     }
-// };
+class Shocker : public Firearms
+{
+public:
+    Shocker()
+    {
+        setName("Shocker");
+        setSize(2);
+        setPrice(1000);
+        setUnlockLevel(2);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(1);
+        enemy->takeDamage(8);
+    }
+};
+class Sniper : public Firearms
+{
+public:
+    Sniper()
+    {
+        setName("Sniper");
+        setSize(4);
+        setPrice(10000);
+        setUnlockLevel(6);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(2);
+        enemy->takeDamage(55);
+    }
+};
+class RPG : public Firearms
+{
+public:
+    RPG()
+    {
+        setName("RPG");
+        setSize(3);
+        setPrice(3000);
+        setUnlockLevel(4);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(3);
+        enemy->takeDamage(23);
+    }
+};
+class Kalashnikov : public Firearms
+{
+public:
+    Kalashnikov()
+    {
+        setName("Kalashnikov");
+        setSize(3);
+        setPrice(2000);
+        setUnlockLevel(3);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(2);
+        enemy->takeDamage(15);
+    }
+};
+class MachineGun : public Firearms
+{
+public:
+    MachineGun()
+    {
+        setName("MachineGun");
+        setSize(4);
+        setPrice(4000);
+        setUnlockLevel(5);
+    }
+    void attack(Player *player, Zombie *enemy)
+    {
+        player->reduceStamina(5);
+        enemy->takeDamage(39);
+    }
+};
 
 bool useItem2(Item *item, Player *player);
 
@@ -1440,25 +1633,42 @@ public:
             itemsInShop.push_back(make_pair(12, zombiePoison));
         }
 
-        DeadlyPoison *deadlyPoison = new DeadlyPoison;
-        if (deadlyPoison->getUnlockLevel() <= player->getCurrentLevel())
+        HomemadeBomb *homemadeBomb = new HomemadeBomb;
+        if (homemadeBomb->getUnlockLevel() <= player->getCurrentLevel())
         {
             ThrowableItemCount++;
-            itemsInShop.push_back(make_pair(13, deadlyPoison));
+            itemsInShop.push_back(make_pair(13, homemadeBomb));
         }
-
         SleepingPoison *sleepingPoison = new SleepingPoison;
         if (sleepingPoison->getUnlockLevel() <= player->getCurrentLevel())
         {
             ThrowableItemCount++;
             itemsInShop.push_back(make_pair(14, sleepingPoison));
         }
+        Shuriken *shuriken = new Shuriken;
+        if (shuriken->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(15, shuriken));
+        }
+        DeadlyPoison *deadlyPoison = new DeadlyPoison;
+        if (deadlyPoison->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            ThrowableItemCount++;
+            itemsInShop.push_back(make_pair(16, deadlyPoison));
+        }
 
         Grenade *grenade = new Grenade;
         if (grenade->getUnlockLevel() <= player->getCurrentLevel())
         {
             ThrowableItemCount++;
-            itemsInShop.push_back(make_pair(15, grenade));
+            itemsInShop.push_back(make_pair(17, grenade));
+        }
+        Wood *wood = new Wood;
+        if (wood->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(19, wood));
         }
 
         WoodenSword *woodenSword = new WoodenSword;
@@ -1468,26 +1678,92 @@ public:
             itemsInShop.push_back(make_pair(20, woodenSword));
         }
 
-        SteelSword *steelSword = new SteelSword;
-        if (steelSword->getUnlockLevel() <= player->getCurrentLevel())
+        Knife *knife = new Knife;
+        if (knife->getUnlockLevel() <= player->getCurrentLevel())
         {
             PermanentItemCount++;
-            itemsInShop.push_back(make_pair(21, steelSword));
+            itemsInShop.push_back(make_pair(21, knife));
+        }
+        Shocker *shocker = new Shocker;
+        if (shocker->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(22, shocker));
         }
 
         Bow *bow = new Bow;
         if (bow->getUnlockLevel() <= player->getCurrentLevel())
         {
             PermanentItemCount++;
-            itemsInShop.push_back(make_pair(22, bow));
+            itemsInShop.push_back(make_pair(23, bow));
+        }
+        Kalashnikov *kalashnikov = new Kalashnikov;
+        if (kalashnikov->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(24, kalashnikov));
+        }
+        SteelSword *steelSword = new SteelSword;
+        if (steelSword->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(25, steelSword));
+        }
+        RPG *rPG = new RPG;
+        if (rPG->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(26, rPG));
+        }
+        Nunchaku *nunchaku = new Nunchaku;
+        if (nunchaku->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(27, nunchaku));
         }
 
         SamouraianSword *samouraianSword = new SamouraianSword;
         if (samouraianSword->getUnlockLevel() <= player->getCurrentLevel())
         {
             PermanentItemCount++;
-            itemsInShop.push_back(make_pair(24, samouraianSword));
+            itemsInShop.push_back(make_pair(28, samouraianSword));
         }
+
+        Colt *colt = new Colt;
+        if (colt->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(29, colt));
+        }
+
+        MachineGun *machineGun = new MachineGun;
+        if (machineGun->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(30, machineGun));
+        }
+        Sniper *sniper = new Sniper;
+        if (sniper->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(31, sniper));
+        }
+        Spear *spear = new Spear;
+        if (spear->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(32, spear));
+        }
+        AncientSword *ancientSword = new AncientSword;
+        if (ancientSword->getUnlockLevel() <= player->getCurrentLevel())
+        {
+            PermanentItemCount++;
+            itemsInShop.push_back(make_pair(33, ancientSword));
+        }
+
+
+
+        // 666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
     }
     // 55555555555555555555555555555555555555555555555555555555555
     void outputShopItems(int line)
@@ -1734,41 +2010,56 @@ void store(Player *player)
             shop.buy(mandrake, player);
         }
 
-        else if (num == 14)
-        {
-            SleepingPoison *sleepingPoison = new SleepingPoison;
-            shop.buy(sleepingPoison, player);
-        }
 
-        else if (num == 13)
-        {
-            DeadlyPoison *deadlyPoison = new DeadlyPoison;
-            shop.buy(deadlyPoison, player);
-        }
 
-        else if (num == 12)
-        {
-            ZombiePoison *zombiePoison = new ZombiePoison;
-            shop.buy(zombiePoison, player);
-        }
-
-        else if (num == 15)
-        {
-            Grenade *grenade = new Grenade;
-            shop.buy(grenade, player);
-        }
-
-        else if (num == 11)
-        {
-            ThrowingKnife *throwingKnife = new ThrowingKnife;
-            shop.buy(throwingKnife, player);
-        }
 
         else if (num == 10)
         {
             Stone *stone = new Stone;
             shop.buy(stone, player);
         }
+        else if (num == 11)
+        {
+            ThrowingKnife *throwingKnife = new ThrowingKnife;
+            shop.buy(throwingKnife, player);
+        }
+        else if (num == 12)
+        {
+            ZombiePoison *zombiePoison = new ZombiePoison;
+            shop.buy(zombiePoison, player);
+        }
+        else if (num == 13)
+        {
+            HomemadeBomb *homemadeBomb = new HomemadeBomb;
+            shop.buy(homemadeBomb, player);
+        }
+        else if (num == 14)
+        {
+            SleepingPoison *sleepingPoison = new SleepingPoison;
+            shop.buy(sleepingPoison, player);
+        }
+
+        else if (num == 15)
+        {
+            Shuriken *shuriken = new Shuriken;
+            shop.buy(shuriken, player);
+        }
+        else if (num == 16)
+        {
+            DeadlyPoison *deadlyPoison = new DeadlyPoison;
+            shop.buy(deadlyPoison, player);
+        }
+        else if (num == 17)
+        {
+            Grenade *grenade = new Grenade;
+            shop.buy(grenade, player);
+        }
+
+
+
+
+
+
         else if (num == 20)
         {
             WoodenSword *woodenSword = new WoodenSword;
@@ -1777,47 +2068,74 @@ void store(Player *player)
 
         else if (num == 21)
         {
-            SteelSword *steelSword = new SteelSword;
-            shop.buy(steelSword, player);
+            Knife *knife = new Knife;
+            shop.buy(knife, player);
         }
 
-        else if (num == 24)
-        {
-            SamouraianSword *samouraianSword = new SamouraianSword;
-            shop.buy(samouraianSword, player);
-        }
         else if (num == 22)
+        {
+            Shocker *shocker = new Shocker;
+            shop.buy(shocker, player);
+        }
+        else if (num == 23)
         {
             Bow *bow = new Bow;
             shop.buy(bow, player);
         }
+        else if (num == 24)
+        {
+            Kalashnikov *kalashnikov = new Kalashnikov;
+            shop.buy(kalashnikov, player);
+        }
+        else if (num == 25)
+        {
+            SteelSword *steelSword = new SteelSword;
+            shop.buy(steelSword, player);
+        }
+        else if (num == 26)
+        {
+            RPG *rPG = new RPG;
+            shop.buy(rPG, player);
+        }
         else if (num == 27)
+        {
+            Nunchaku *nunchaku = new Nunchaku;
+            shop.buy(nunchaku, player);
+        }
+        else if (num == 28)
+        {
+            SamouraianSword *samouraianSword = new SamouraianSword;
+            shop.buy(samouraianSword, player);
+        }
+        else if (num == 29)
         {
             Colt *colt = new Colt;
             shop.buy(colt, player);
         }
-        // else if (num == 18)
-        // {
-        //     Shukr *shukr = new Shukr;
-        //     shop.buy(shukr, player);
-        // }
-        // else if (num == 19)
-        // {
-        //     Sniper *sniper = new Sniper;
-        //     shop.buy(sniper, player);
-        // }
-        // else if (num == 20)
-        // {
-        //     Nunchaku *nunchaku = new Nunchaku;
-        //     shop.buy(nunchaku, player);
-        // }
-        // else if (num == 21)
-        // {
-        //     Knife *knife = new Knife;
-        //     shop.buy(knife, player);
-        // }
-        // cout<<int(q);
-        // q = getch();
+        else if (num == 30)
+        {
+            MachineGun *machineGun = new MachineGun;
+            shop.buy(machineGun, player);
+        }
+        else if (num == 31)
+        {
+            Sniper *sniper = new Sniper;
+            shop.buy(sniper, player);
+        }
+        else if (num == 32)
+        {
+            Spear *spear = new Spear;
+            shop.buy(spear, player);
+        }
+        else if (num == 33)
+        {
+            AncientSword *ancientSword = new AncientSword;
+            shop.buy(ancientSword, player);
+        }
+
+
+
+
     }
 }
 
@@ -1876,23 +2194,57 @@ bool useItem2(Item *item, Player *player)
 void attack(Player *player, Zombie *enemy)
 {
     // enum class fightOption { NONE, ATTACK, LOWHP, LOWSTAMINA};
+    /*
+    cout << '\n';
+    print(player->getName(), 3);
+    cout << "          ";
+    print("vs", 15);
+    cout << "          ";
+    print(enemy->getName(), 4);
+    cout << '\n';
+    */
+    print("\nplayer          ", 3);
+    print("vs", 15);
+    print("          enemy\n", 4);
+    print("\nlevel: ", 3);
+    cout << player->getCurrentLevel();
+    print("                    level: ", 4);
+    cout << enemy->getCurrentLevel() << '\n';
+    print("xp: ", 3);
+    cout << player->getCurrentXp();
+    print("                       xp worth: ", 4);
+    cout << enemy->getCurrentXp();
+    print("\nhp: ", 3);
+    cout << player->getCurrentHp();
+    print("/", 3);
+    cout << player->getMaxHp();
+    print("\t\t    hp: ", 4);
+    cout << enemy->getCurrentHp();
+    print("/", 3);
+    cout << enemy->getMaxHp() << '\n';
+    print("stamina: ", 3);
+    cout << player->getCurrentStamina();
+    print("/", 3);
+    cout << player->getMaxStamina() << '\n';
+    print("\nPress any key to select your items and start the fight <: :> \n\n", 14);
+
+    int enterKey = _getch();
+    print("If you choose the permanent item, you must be attack! \n", 5);
+
     while (player->getCurrentHp() > 0 && enemy->getCurrentHp() > 0)
     {
         // fightOption actionTaken = fightOption::NONE;
         // char action = '\0';
         // while (actionTaken == fightOption::NONE)
         // {
-        int i = 0;
-        // clean();
-        cout << "\nplayer          vs          enemy\n"
-             << "\nplayer hp: " << player->getCurrentHp() << "/" << player->getMaxHp() << "\tenemy hp: " << enemy->getCurrentHp() << "/" << enemy->getMaxHp() << '\n';
+
         //      << "\naction(a:attack,h:lowHp,s:lowStamina)\n";
         // action = getchar();
         // switch (action)
         // {
         // case 'a':
         // actionTaken = fightOption::ATTACK;
-        cin >> i;
+        // cin >> i;
 
         while (1)
         {
@@ -1918,8 +2270,20 @@ void attack(Player *player, Zombie *enemy)
         //     break;
         // }
         // }
-        cout << "\nplayer          vs          enemy\n"
-             << "\nplayer hp: " << player->getCurrentHp() << "/" << player->getMaxHp() << "\tenemy hp: " << enemy->getCurrentHp() << "/" << enemy->getMaxHp() << '\n';
+        clean();
+
+        print("\nplayer hp: ", 3);
+        cout << player->getCurrentHp();
+        print("/", 3);
+        cout << player->getMaxHp();
+        print("\tenemy hp: ", 4);
+        cout << enemy->getCurrentHp();
+        print("/", 3);
+        cout << enemy->getMaxHp() << '\n';
+        print("player stamina: ", 3);
+        cout << player->getCurrentStamina();
+        print("/", 3);
+        cout << player->getMaxStamina() << '\n';
 
         if (enemy->getCurrentHp() > 0)
         {
@@ -1933,21 +2297,28 @@ void attack(Player *player, Zombie *enemy)
             player->takeDamage(enemy->getDamage());
             // }
         }
-<<<<<<< Updated upstream
-        cin >> i;
-=======
-        // cin >> i;
->>>>>>> Stashed changes
+
+        print("\nPress any key to select your items <: :> \n\n", 14);
+        enterKey = _getch();
     }
 
     if (player->getCurrentHp() > 0)
     {
-        cout << "\nyou won in the fight!\n";
-        // enemy.setXpWorth();
-
+        clean();
+        print("\n************* You won in the fight! *************\n", 5);
+        // player->checkIfLeveled();
         player->gainXp(enemy->getCurrentXp());
         player->gainMoney(enemy->getMoney());
-        cout << "\nxp gained: " << enemy->getCurrentXp();
+        print("\nxp gained: ", 10);
+        cout << enemy->getCurrentXp();
+        print("\nmoney gained: ", 10);
+        cout << enemy->getMoney();
+        print("\nplayer current level: ", 10);
+        cout << player->getCurrentLevel();
+        print("\nplayer current xp: ", 10);
+        cout << player->getCurrentXp();
+        print("\ncurrent xp / required xp to level up: ", 10);
+        cout << player->getCurrentXp() << "/" << player->getXpToLevelUp();
 
         /* here shoud creat an object with Item class and collocate items in backPack function that exist in Item class
         for example:
@@ -1958,7 +2329,7 @@ void attack(Player *player, Zombie *enemy)
         */
     }
 
-    cout << "\n Press Enter to Continue\n";
+    print("\n\n^^^^^Press Enter to Continue^^^^^ \n", 14);
     char a = getch();
 }
 
@@ -1972,7 +2343,7 @@ int nadjafikhah(int peymane)
 Zombie enemyFactory(Player *player)
 {
     Zombie zombie;
-    zombie.setDamage((player->getCurrentLevel() + player->getCurrentXp() / player->getXpToLevelUp()) * 3 * (nadjafikhah(40) + 80) / 100);
+    zombie.setDamage((player->getCurrentLevel() + player->getCurrentXp() / player->getXpToLevelUp()) * 2 * (nadjafikhah(40) + 80) / 100);
     zombie.setMoney((player->getCurrentLevel() + player->getCurrentXp() / player->getXpToLevelUp()) * 50 * (nadjafikhah(40) + 80) / 100);
     zombie.setCurrentHp((player->getCurrentLevel() + player->getCurrentXp() / player->getXpToLevelUp()) * 15 * (nadjafikhah(60) + 80) / 100);
     zombie.setMaxHp(zombie.getCurrentHp());
@@ -2008,6 +2379,7 @@ int main()
 
     Player Ali;
     Ali.takeDamage(40);
+
     Ali.reduceStamina(50);
     Ali.setMoney(500);
     gameLoop(&Ali);
