@@ -752,7 +752,6 @@ private:
     string gender;
     string job;
     Item *itemInHand;
-    string itemHand;
 
 public:
     string getJob()
@@ -786,14 +785,6 @@ public:
     void setItemInHand(Item *itemInHand)
     {
         this->itemInHand = itemInHand;
-    }
-    string getItemHand()
-    {
-        return this->itemHand;
-    }
-    void setItemHand(string IH)
-    {
-        this->itemHand = IH;
     }
     Human() : Character() {}
 };
@@ -883,7 +874,6 @@ public:
     }
     Zombie() : Character()
     {
-        setDamage(3);
         setType("Zombie");
     }
 };
@@ -2297,9 +2287,9 @@ void attack(Player *player, Zombie *enemy)
     cout << enemy->getMoney();
 
     print("\nItem in hand: ", 3);
-    cout << "punch";
-    output = "Item in hand: punch";
-    for (int i = 0; i < 36 - output.size(); i++)
+    // cout << player->getItemInHand()->getName();
+    // output = "Item in hand: " + player->getItemInHand()->getName();
+    for (int i = 0; i < 36 - 14; i++)
     {
         cout << " ";
     }
@@ -2326,12 +2316,13 @@ void attack(Player *player, Zombie *enemy)
             while (1)
             {
                 Item *item = player->choosingItemFromBag();
+                // if (useItem(item, player, enemy))
+                // {
+                //     // player->     %%%%%%%%%%%%%%%%%%%%%%%%%here should use the changeItemInHand%%%%%%%%%%%%%%%%%%%%%%%
+                //     break;
+                // }
+                // else 
                 if (useItem(item, player, enemy))
-                {
-                    player->setItemHand(item->getName());
-                    break;
-                }
-                else if (!useItem(item, player, enemy))
                 {
                     break;
                 }
@@ -2346,14 +2337,14 @@ void attack(Player *player, Zombie *enemy)
             print("1 ", color_yellow);
             print("\nIf you want to increase the skill ColdWeapon, choose number ", color_magenta);
             print("2 ", color_yellow);
-            print("\nIf you want to do nothing, choose number ", color_magenta);
-            print("3 \n", color_yellow);
+            print("\nIf you want to do nothing, press ", color_magenta);
+            print("Backspace \n", color_yellow);
             print("\nSelect your choice  ", color_yellow);
 
-            int i;
-            cin >> i;
+            char i;
+            i = getch();
 
-            if (i == 1)
+            if (i == 49)
             {
                 player->increaseSkillFirearm(player->getRawSkillPoint());
                 if (player->increaseSkillFirearm(player->getRawSkillPoint()))
@@ -2372,7 +2363,7 @@ void attack(Player *player, Zombie *enemy)
                     int w = _getch();
                 }
             }
-            else if (i == 2)
+            else if (i == 50)
             {
                 player->increaseSkillColdWeapon(player->getRawSkillPoint());
                 if (player->increaseSkillColdWeapon(player->getRawSkillPoint()))
@@ -2391,7 +2382,7 @@ void attack(Player *player, Zombie *enemy)
                     int w = _getch();
                 }
             }
-            else if (i == 3)
+            else if (i == 8)
             {
             }
             else
@@ -2410,8 +2401,6 @@ void attack(Player *player, Zombie *enemy)
         default:
             break;
         }
-
-        clean();
 
         // *************************change this for time that creat getName function****************************************
         /*
@@ -2490,10 +2479,10 @@ void attack(Player *player, Zombie *enemy)
         cout << enemy->getMoney();
 
         print("\nItem in hand: ", 3);
-        cout << player->getItemHand();
+        // cout << player->getItemInHand()->getName();
 
-        output = "Item in hand: " + player->getItemHand();
-        for (int i = 0; i < 36 - output.size(); i++)
+        // output = "Item in hand: " + player->getItemInHand()->getName();
+        for (int i = 0; i < 36 - 14; i++)
         {
             cout << " ";
         }
