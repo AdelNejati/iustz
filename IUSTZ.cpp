@@ -432,12 +432,6 @@ public:
     {
         return maxStamina;
     }
-    // Stamina(int currentStamina, int maxStamina)
-    // {
-    //     this->currentStamina = currentStamina;
-    //     this->maxStamina = maxStamina;
-    // }
-
     /// <summary> this function use for change the max stamina </summary>
     bool setMaxStamina(int newMaxStamina)
     {
@@ -561,94 +555,94 @@ public:
     }
 };
 
-class Bag
+class BackPack
 {
 private:
-    vector<Item *> bag;
-    int bagMaxSize;
-    int bagSize;
+    vector<Item *> backPack;
+    int backPackMaxSize;
+    int backPackSize;
 
 public:
-    Bag()
+    BackPack()
     {
-        bagMaxSize = 10;
-        bagSize = 0;
+        backPackMaxSize = 10;
+        backPackSize = 0;
     }
-    int getBagSize()
+    int getbackPackSize()
     {
-        return bagSize;
+        return backPackSize;
     }
-    int getBagMaxSize()
+    int getbackPackMaxSize()
     {
-        return bagMaxSize;
+        return backPackMaxSize;
     }
-    void setBagMaxSize(int bagMaxSize)
+    void setbackPackMaxSize(int backPackMaxSize)
     {
-        this->bagMaxSize = bagMaxSize;
+        this->backPackMaxSize = backPackMaxSize;
     }
-    void setBagSize(int bagSize)
+    void setbackPackSize(int backPackSize)
     {
-        this->bagSize = bagSize;
+        this->backPackSize = backPackSize;
     }
-    // void ItemsInBag()
+    // void ItemsInbackPack()
     // {
-    //     for (int i = 1; i <= bag.size(); i++)
+    //     for (int i = 1; i <= backPack.size(); i++)
     //     {
-    //         cout << i << ". " << bag[i - 1]->getName() << " : " << bag[i - 1]->getPrice() << "$\n";
+    //         cout << i << ". " << backPack[i - 1]->getName() << " : " << backPack[i - 1]->getPrice() << "$\n";
     //     }
     // }
-    Item *choosingItemFromBag()
+    Item *choosingItemFrombackPack()
     {
-        ItemsInBag();
+        ItemsInbackPack();
         // cout << "Enter number of item to use";
         print("Enter number of item to use <<( )>> ", 6);
         int i;
         cin >> i;
-        Item *tempItem = bag[i - 1];
+        Item *tempItem = backPack[i - 1];
         // if(tempItem->getType()!="Permanent Item"){
-        // bag.erase(bag.begin() + i - 1);
+        // backPack.erase(backPack.begin() + i - 1);
         // }
 
         return tempItem;
     }
-    void deletItemFromBag(Item *item)
+    void deletItemFrombackPack(Item *item)
     {
-        for (int i = 0; i < bag.size(); i++)
+        for (int i = 0; i < backPack.size(); i++)
         {
 
-            if (bag[i]->getName() == item->getName() && bag[i]->getIsUsed())
+            if (backPack[i]->getName() == item->getName() /*&& backPack[i]->getIsUsed()*/)
             {
-                bag.erase(bag.begin() + i);
-                bagSize = bagSize - item->getSize();
+                backPack.erase(backPack.begin() + i);
+                backPackSize = backPackSize - item->getSize();
                 return;
             }
         }
     }
 
-    void AddItemTOBag(Item *item)
+    void AddItemTObackPack(Item *item)
     {
-        bagSize += item->getSize();
-        bag.push_back(item);
+        backPackSize += item->getSize();
+        backPack.push_back(item);
     }
-    void ItemsInBag()
+    void ItemsInbackPack()
     {
-        for (int i = 0; i < bag.size(); i++)
+        for (int i = 0; i < backPack.size(); i++)
         {
             // int counter=1;
-            // for (int j = i+1; j < bag.size(); j++)
+            // for (int j = i+1; j < backPack.size(); j++)
             // {
-            //     if(bag[i]->getName()==bag[j]->getName()){
+            //     if(backPack[i]->getName()==backPack[j]->getName()){
             //         counter++;
             //     }
             // }
 
             cout << "(" << i + 1 << ")...";
 
-            print(bag[i]->getName() + "\n", color_light_blue, color_black);
+            print(backPack[i]->getName() + "\n", color_light_blue, color_black);
         }
     }
 };
-// class Player : public Hp, public Level, public Stamina, public Bag
+// class Player : public Hp, public Level, public Stamina, public backPack
 // {
 // private:
 //     int money;
@@ -745,7 +739,7 @@ public:
     }
 };
 
-class Human : public Character, public Stamina, public Bag
+class Human : public Character, public Stamina, public BackPack
 {
 private:
     int age;
@@ -1104,6 +1098,9 @@ public:
 
 class ThrowableItem : public Item
 {
+private:
+    // int damage;
+    // int 
 public:
     ThrowableItem()
     {
@@ -1525,7 +1522,7 @@ public:
     }
 };
 
-bool useItem2(Item *item, Player *player);
+bool useItemInShop(Item *item, Player *player);
 
 void printPlayerProperty(Player *player)
 {
@@ -1557,7 +1554,7 @@ public:
     }
     bool buy(Item *item, Player *player)
     {
-        if ((player->getMoney() - item->getPrice() < 0) || (player->getBagMaxSize() < player->getBagSize() + item->getSize()))
+        if ((player->getMoney() - item->getPrice() < 0) || (player->getbackPackMaxSize() < player->getbackPackSize() + item->getSize()))
         {
             print("You can`t buy this item.\n", color_dark_red, color_black);
             cout << "Press any key to continue.\n";
@@ -1565,7 +1562,7 @@ public:
             q = getch();
             return 0;
         }
-        player->AddItemTOBag(item);
+        player->AddItemTObackPack(item);
         player->setMoney(player->getMoney() - item->getPrice());
         return 1;
     }
@@ -1648,7 +1645,7 @@ public:
         Shuriken *shuriken = new Shuriken;
         if (shuriken->getUnlockLevel() <= player->getCurrentLevel())
         {
-            PermanentItemCount++;
+            ThrowableItemCount++;
             itemsInShop.push_back(make_pair(15, shuriken));
         }
         DeadlyPoison *deadlyPoison = new DeadlyPoison;
@@ -1760,8 +1757,6 @@ public:
             PermanentItemCount++;
             itemsInShop.push_back(make_pair(33, ancientSword));
         }
-
-
 
         // 666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
     }
@@ -1882,11 +1877,11 @@ void outputStore(Player *player, Shop shop, int line)
     cout << "HP : " << player->getCurrentHp() << " / " << player->getMaxHp() << "\n\n";
     cout << "Stamina : " << player->getCurrentStamina() << " / " << player->getMaxStamina() << "\n\n";
 
-    cout << "Your Bag`s size : " << player->getBagSize() << " / " << player->getBagMaxSize() << "\n\n";
+    cout << "Your backPack`s size : " << player->getbackPackSize() << " / " << player->getbackPackMaxSize() << "\n\n";
 
-    cout << "Your items in Bag : "
+    cout << "Your items in backPack : "
          << "\n";
-    player->ItemsInBag();
+    player->ItemsInbackPack();
     cout << "\n";
 
     cout << "Items in Shop : "
@@ -1917,7 +1912,7 @@ void store(Player *player)
                 bool flag = 1;
                 while (flag)
                 {
-                    useItem2(player->choosingItemFromBag(), player);
+                    useItemInShop(player->choosingItemFrombackPack(), player);
                     cout << "Enter Backspace to return to shop";
                     q = getch();
                     if ((int)q == 8)
@@ -2010,9 +2005,6 @@ void store(Player *player)
             shop.buy(mandrake, player);
         }
 
-
-
-
         else if (num == 10)
         {
             Stone *stone = new Stone;
@@ -2054,11 +2046,6 @@ void store(Player *player)
             Grenade *grenade = new Grenade;
             shop.buy(grenade, player);
         }
-
-
-
-
-
 
         else if (num == 20)
         {
@@ -2132,10 +2119,6 @@ void store(Player *player)
             AncientSword *ancientSword = new AncientSword;
             shop.buy(ancientSword, player);
         }
-
-
-
-
     }
 }
 
@@ -2147,21 +2130,28 @@ bool useItem(Item *item, Player *player, Zombie *enemy)
 
         Medicine *medicine = (Medicine *)item;
         medicine->useItem(player);
-        player->deletItemFromBag(medicine);
+        print("Using " + medicine->getName() + " : +", color_green);
+        print(to_string(medicine->getTreatmentValue()) + " HP\n", color_green);
+        player->deletItemFrombackPack(medicine);
         return 0;
     }
     if (item->getType() == "Food")
     {
         Food *food = (Food *)item;
         food->useItem(player);
-        player->deletItemFromBag(food);
+        print("Using " + food->getName() + " : +", color_green);
+        print(to_string(food->getStaminaValue()) + " Stamina\n", color_green);
+        player->deletItemFrombackPack(food);
         return 0;
     }
     if (item->getType() == "Throwable Item")
     {
         ThrowableItem *throwableItem = (ThrowableItem *)item;
         throwableItem->Throw(player, enemy);
-        player->deletItemFromBag(throwableItem);
+
+        print("Using " + throwableItem->getName() + " : ", color_green);
+        // print(throwableItem()+" Stamina\n",color_green);
+        player->deletItemFrombackPack(throwableItem);
         return 0;
     }
     if (item->getType() == "Permanent Item")
@@ -2171,23 +2161,54 @@ bool useItem(Item *item, Player *player, Zombie *enemy)
         return 1;
     }
 }
-bool useItem2(Item *item, Player *player)
+bool useItemInShop(Item *item, Player *player)
 {
     if (item->getType() == "Medicine")
     {
 
         Medicine *medicine = (Medicine *)item;
         medicine->useItem(player);
-        player->deletItemFromBag(medicine);
+        print("Using " + medicine->getName() + " : +", color_green);
+        print(to_string(medicine->getTreatmentValue()) + " HP\n", color_green);
+        player->deletItemFrombackPack(medicine);
         return 0;
     }
     if (item->getType() == "Food")
     {
         Food *food = (Food *)item;
         food->useItem(player);
-        player->deletItemFromBag(food);
+        print("Using " + food->getName() + " : +", color_green);
+        print(to_string(food->getStaminaValue()) + " Stamina\n", color_green);
+        player->deletItemFrombackPack(food);
         return 0;
     }
+    if (item->getType() == "Throwable Item")
+    {
+        ThrowableItem *throwableItem = (ThrowableItem *)item;
+        print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n",color_red);
+        char q;
+        q = getch();
+        if ((int) q == 8)        
+        {
+            print(throwableItem->getName()+" deleted.\n",color_red);
+            player->deletItemFrombackPack(throwableItem);
+        }
+        return 0;
+    }
+    if (item->getType() == "Permanent Item")
+    {
+        PermanentItem *permanentItem = (PermanentItem *)item;
+        print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n",color_red);
+        char q;
+        q = getch();
+        if ((int)q == 8)
+        {
+            print(permanentItem->getName()+" deleted.\n",color_red);
+            player->deletItemFrombackPack(permanentItem);
+        }
+        return 0;
+    }
+    return 0;
 }
 // 4444444444444444444444444444444444444444444
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
@@ -2203,6 +2224,7 @@ void attack(Player *player, Zombie *enemy)
     print(enemy->getName(), 4);
     cout << '\n';
     */
+    clean();
     print("\nplayer          ", 3);
     print("vs", 15);
     print("          enemy\n", 4);
@@ -2248,7 +2270,7 @@ void attack(Player *player, Zombie *enemy)
 
         while (1)
         {
-            Item *item = player->choosingItemFromBag();
+            Item *item = player->choosingItemFrombackPack();
             if (useItem(item, player, enemy))
             {
                 break;
@@ -2270,7 +2292,6 @@ void attack(Player *player, Zombie *enemy)
         //     break;
         // }
         // }
-        clean();
 
         print("\nplayer hp: ", 3);
         cout << player->getCurrentHp();
@@ -2287,26 +2308,17 @@ void attack(Player *player, Zombie *enemy)
 
         if (enemy->getCurrentHp() > 0)
         {
-            // int damageWeTake = enemy.getMeleAttack();
-            int damageWeTake = 3;
-            // damageWeTake -= player.getTotalArmor;
-            // if (damageWeTake < 1)
-            // {
-            damageWeTake = 1;
-            // player.takeDamage(damageWeTake);
-            player->takeDamage(enemy->getDamage());
-            // }
-        }
 
-        print("\nPress any key to select your items <: :> \n\n", 14);
-        enterKey = _getch();
+            player->takeDamage(enemy->getDamage());
+        }
     }
+    // print("\nPress any key to select your items <: :> \n\n", 14);
+    // enterKey = _getch();
 
     if (player->getCurrentHp() > 0)
     {
-        clean();
+        // clean();
         print("\n************* You won in the fight! *************\n", 5);
-        // player->checkIfLeveled();
         player->gainXp(enemy->getCurrentXp());
         player->gainMoney(enemy->getMoney());
         print("\nxp gained: ", 10);
