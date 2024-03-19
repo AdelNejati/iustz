@@ -2225,6 +2225,8 @@ void displayPlayerInfo(Player *player, Zombie *enemy)
         cout << '\n';
         print(enemy->getName(), color_dark_red);
     */
+    print("\n*****************************************************", color_white);
+
     print("\nPlayer", color_light_blue);
     string output = player->getName();
     for (int i = 0; i < 15 - output.size(); i++)
@@ -2293,6 +2295,7 @@ void displayPlayerInfo(Player *player, Zombie *enemy)
     }
     print("Damage: ", color_dark_red);
     cout << enemy->getDamage();
+    print("\n*****************************************************\n", color_white);
 }
 // 4444444444444444444444444444444444444444444
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
@@ -2303,112 +2306,114 @@ void attack(Player *player, Zombie *enemy)
 
     while (player->getCurrentHp() > 0 && enemy->getCurrentHp() > 0)
     {
-        print("\n\nIf you want to use the items in your bag, choose number ", color_magenta);
-        print("1 ", color_yellow);
-        print("\nIf you want to use the skill points, choose number ", color_magenta);
-        print("2 ", color_yellow);
-        print("\nIf you want to attack, choose number ", color_magenta);
-        print("3 ", color_yellow);
-        print("\n\nSelect your choice  ", color_yellow);
-
-        int q;
-        cin >> q;
-
-        switch (q)
+        bool backToMenu = true;
+        while (backToMenu)
         {
-        case 1:
-            while (1)
-            {
-                Item *item = player->choosingItemFromBag();
-                // if (useItem(item, player, enemy))
-                // {
-                //     // player->     %%%%%%%%%%%%%%%%%%%%%%%%%here should use the changeItemInHand%%%%%%%%%%%%%%%%%%%%%%%
-                //     break;
-                // }
-                // else 
-                if (useItem(item, player, enemy))
-                {
-                    break;
-                }
-            }
-            break;
-        case 2:
-            // clean();
-            print("\nyour raw skill points: ", color_green);
-            cout << player->getRawSkillPoint();
-
-            print("\nIf you want to increase the skill firearm, choose number ", color_magenta);
+            print("\n\nIf you want to use the items in your bag, choose number ", color_magenta);
             print("1 ", color_yellow);
-            print("\nIf you want to increase the skill ColdWeapon, choose number ", color_magenta);
+            print("\nIf you want to use the skill points, choose number ", color_magenta);
             print("2 ", color_yellow);
-            print("\nIf you want to do nothing, press ", color_magenta);
-            print("Backspace \n", color_yellow);
-            print("\nSelect your choice  ", color_yellow);
+            print("\nIf you want to attack, choose number ", color_magenta);
+            print("3 ", color_yellow);
+            print("\n\nSelect your choice  ", color_yellow);
 
-            char i;
-            i = getch();
+            int q;
+            cin >> q;
 
-            if (i == 49)
+            switch (q)
             {
-                player->increaseSkillFirearm(player->getRawSkillPoint());
-                if (player->increaseSkillFirearm(player->getRawSkillPoint()))
+            case 1:
+                while (1)
                 {
-                    player->setRawSkillPoint(0);
-                    print("\nyour skill level of firearm increased!", color_magenta);
-                    print("\nskill level of firearm: ", color_magenta);
-                    cout << player->getSkillLevelOfFirearm();
-                    print("\n\nPress any key to continue \n", color_yellow);
-                    int w = _getch();
+                    Item *item = player->choosingItemFromBag();
+                    // if (useItem(item, player, enemy))
+                    // {
+                    //     // player->     %%%%%%%%%%%%%%%%%%%%%%%%%here should use the changeItemInHand%%%%%%%%%%%%%%%%%%%%%%%
+                    //     break;
+                    // }
+                    // else
+                    if (useItem(item, player, enemy))
+                    {
+                        backToMenu = false;
+                        break;
+                    }
+                }
+                break;
+            case 2:
+                print("\nyour raw skill points: ", color_green);
+                cout << player->getRawSkillPoint();
+
+                print("\nIf you want to increase the skill firearm, choose number ", color_magenta);
+                print("1 ", color_yellow);
+                print("\nIf you want to increase the skill ColdWeapon, choose number ", color_magenta);
+                print("2 ", color_yellow);
+                print("\nIf you want to do nothing, press ", color_magenta);
+                print("Backspace \n", color_yellow);
+                print("\nSelect your choice  ", color_yellow);
+
+                char i;
+                i = getch();
+
+                if (i == 49)
+                {
+                    player->increaseSkillFirearm(player->getRawSkillPoint());
+                    if (player->increaseSkillFirearm(player->getRawSkillPoint()))
+                    {
+                        player->setRawSkillPoint(0);
+                        print("\nyour skill level of firearm increased!", color_magenta);
+                        print("\nskill level of firearm: ", color_magenta);
+                        cout << player->getSkillLevelOfFirearm();
+                        print("\n\nPress any key to continue \n", color_yellow);
+                        int w = _getch();
+                    }
+                    else
+                    {
+                        print("\nNothing happened! ", color_magenta);
+                        print("\n\nPress any key to continue ", color_yellow);
+                        int w = _getch();
+                    }
+                }
+                else if (i == 50)
+                {
+                    player->increaseSkillColdWeapon(player->getRawSkillPoint());
+                    if (player->increaseSkillColdWeapon(player->getRawSkillPoint()))
+                    {
+                        player->setRawSkillPoint(0);
+                        print("\nyour skill level of cold weapon increased!", color_magenta);
+                        print("\nskill level of cold weapon: ", color_magenta);
+                        cout << player->getSkillLevelOfColdWeapon();
+                        print("\n\nPress any key to continue \n", color_yellow);
+                        int w = _getch();
+                    }
+                    else
+                    {
+                        print("\nNothing happened! You have not raw skill points!", color_magenta);
+                        print("\n\nPress any key to continue ", color_yellow);
+                        int w = _getch();
+                    }
+                }
+                else if (i == 8)
+                {
                 }
                 else
                 {
-                    print("Nothing happened! ", color_magenta);
+                    print("\nYour choice is not valid! ", color_dark_red);
                     print("\n\nPress any key to continue ", color_yellow);
                     int w = _getch();
                 }
+                break;
+            case 3:
+                // Item *item;
+                // item->getType() = "Permanent Item";
+                // PermanentItem *permanentItem;
+                // permanentItem->attack(player, enemy);
+                break;
+            default:
+                break;
             }
-            else if (i == 50)
-            {
-                player->increaseSkillColdWeapon(player->getRawSkillPoint());
-                if (player->increaseSkillColdWeapon(player->getRawSkillPoint()))
-                {
-                    player->setRawSkillPoint(0);
-                    print("\nyour skill level of cold weapon increased!", color_magenta);
-                    print("\nskill level of cold weapon: ", color_magenta);
-                    cout << player->getSkillLevelOfColdWeapon();
-                    print("\n\nPress any key to continue \n", color_yellow);
-                    int w = _getch();
-                }
-                else
-                {
-                    print("\nNothing happened! You have not raw skill points!", color_magenta);
-                    print("\n\nPress any key to continue ", color_yellow);
-                    int w = _getch();
-                }
-            }
-            else if (i == 8)
-            {
-                print("\nYou missed your turn !!\n", color_dark_red);
-            }
-            else
-            {
-                print("\nYour choice is not valid! ", color_dark_red);
-                print("\n\nPress any key to continue ", color_yellow);
-                int w = _getch();
-            }
-            break;
-        case 3:
-            // Item *item;
-            // item->getType() = "Permanent Item";
-            // PermanentItem *permanentItem;
-            // permanentItem->attack(player, enemy);
-            break;
-        default:
-            break;
         }
-
         displayPlayerInfo(player, enemy);
-       
+
         if (enemy->getCurrentHp() > 0)
         {
             // int damageWeTake = enemy.getMeleAttack();
@@ -2421,7 +2426,7 @@ void attack(Player *player, Zombie *enemy)
             print("\n\nNow it is the enemy's turn!!\nPress any key... \n", color_yellow);
             char e;
             e = _getch();
-            player->takeDamage(3);
+            player->takeDamage(enemy->getDamage());
             displayPlayerInfo(player, enemy);
 
             // }
@@ -2431,10 +2436,6 @@ void attack(Player *player, Zombie *enemy)
     if (player->getCurrentHp() > 0)
     {
         print("\n\n\n************* You won in the fight! *************\n", color_yellow);
-        print("\nPress any key to see your trophies... ", color_yellow);
-        char e;
-        e =  _getch();
-        clean();
 
         player->gainXp(enemy->getCurrentXp());
         player->gainMoney(enemy->getMoney());
@@ -2453,7 +2454,6 @@ void attack(Player *player, Zombie *enemy)
     }
     else
     {
-        clean();
         print("\n############ You lost the fight! ############\n", color_green);
         print("\nxp gained: ", color_green);
         cout << 0;
