@@ -846,6 +846,7 @@ private:
     int skillOfFirearm = 1;
     int skillOfColdWeapon = 1;
     int rawSkillPoint = 0;
+    int damage;
 
 public:
     int getSkillOfFirearm()
@@ -912,6 +913,22 @@ public:
         {
             print("You do not have enough raw skillpoints", color_red, color_black);
         }
+    }
+    bool canIncreaseSkillOfFirearm(int number)
+    {
+        if (this->rawSkillPoint >= number)
+        {
+            return true;
+        }
+        return false;
+    }
+    bool canIncreaseSkillOfColdWeapon(int number)
+    {
+        if (this->rawSkillPoint >= number)
+        {
+            return true;
+        }
+        return false;
     }
 
     Player() : Human()
@@ -2465,40 +2482,40 @@ void attack(Player *player, Zombie *enemy)
             if (i == 49)
             {
                 player->increaseSkillOfFirearm(player->getRawSkillPoint());
-                // if (player->increaseSkillOfFirearm(player->getRawSkillPoint()))
-                // {
-                //     player->setRawSkillPoint(0);
-                //     print("\nyour skill level of firearm increased!", color_magenta);
-                //     print("\nskill level of firearm: ", color_magenta);
-                //     cout << player->getSkillOfFirearm();
-                //     print("\n\nPress any key to continue ", color_yellow);
-                //     int w = _getch();
-                // }
-                // else
-                // {
-                //     print("Nothing happened! ", color_magenta);
-                //     print("\n\nPress any key to continue ", color_yellow);
-                //     int w = _getch();
-                // }
+                if (player->canIncreaseSkillOfFirearm(player->getRawSkillPoint()))
+                {
+                    // player->setRawSkillPoint(0);
+                    print("\nyour skill level of firearm increased!", color_magenta);
+                    print("\nskill level of firearm: ", color_magenta);
+                    cout << player->getSkillOfFirearm();
+                    print("\n\nPress any key to continue ", color_yellow);
+                    int w = _getch();
+                }
+                else
+                {
+                    print("Nothing happened! ", color_magenta);
+                    print("\n\nPress any key to continue ", color_yellow);
+                    int w = _getch();
+                }
             }
             else if (i == 50)
             {
                 player->increaseSkillOfColdWeapon(player->getRawSkillPoint());
-                // if (player->increaseSkillOfColdWeapon(player->getRawSkillPoint()))
-                // {
-                //     player->setRawSkillPoint(0);
-                //     print("\nyour skill level of cold weapon increased!", color_magenta);
-                //     print("\nskill level of cold weapon: ", color_magenta);
-                //     cout << player->getSkillOfColdWeapon();
-                //     print("\n\nPress any key to continue ", color_yellow);
-                //     int w = _getch();
-                // }
-                // else
-                // {
-                //     print("Nothing happened! ", color_magenta);
-                //     print("\n\nPress any key to continue ", color_yellow);
-                //     int w = _getch();
-                // }
+                if (player->canIncreaseSkillOfColdWeapon(player->getRawSkillPoint()))
+                {
+                    // player->setRawSkillPoint(0);
+                    print("\nyour skill level of cold weapon increased!", color_magenta);
+                    print("\nskill level of cold weapon: ", color_magenta);
+                    cout << player->getSkillOfColdWeapon();
+                    print("\n\nPress any key to continue ", color_yellow);
+                    int w = _getch();
+                }
+                else
+                {
+                    print("Nothing happened! ", color_magenta);
+                    print("\n\nPress any key to continue ", color_yellow);
+                    int w = _getch();
+                }
             }
             else if (i == 8)
             {
