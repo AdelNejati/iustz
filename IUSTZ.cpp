@@ -568,19 +568,19 @@ public:
         backPackMaxSize = 10;
         backPackSize = 0;
     }
-    int getbackPackSize()
+    int getBackPackSize()
     {
         return backPackSize;
     }
-    int getbackPackMaxSize()
+    int getBackPackMaxSize()
     {
         return backPackMaxSize;
     }
-    void setbackPackMaxSize(int backPackMaxSize)
+    void setBackPackMaxSize(int backPackMaxSize)
     {
         this->backPackMaxSize = backPackMaxSize;
     }
-    void setbackPackSize(int backPackSize)
+    void setBackPackSize(int backPackSize)
     {
         this->backPackSize = backPackSize;
     }
@@ -606,7 +606,7 @@ public:
 
         return tempItem;
     }
-    void deletItemFrombackPack(Item *item)
+    void deletItemFromBackPack(Item *item)
     {
         for (int i = 0; i < backPack.size(); i++)
         {
@@ -620,7 +620,7 @@ public:
         }
     }
 
-    void AddItemTObackPack(Item *item)
+    void AddItemToBackPack(Item *item)
     {
         backPackSize += item->getSize();
         backPack.push_back(item);
@@ -739,6 +739,32 @@ public:
         setMoney(500);
     }
 };
+// 0000000000000000000000000000000000000000000000000000000000000000000000000
+class Enemy //: public Character
+{
+private:
+    int damage;
+    bool sleepMode = 0;
+
+public:
+    void setDmamge(int damage)
+    {
+        this->damage = damage;
+    }
+    int getDamage()
+    {
+        return damage;
+    }
+    void setSleepMode(bool sleepMode)
+    {
+        this->sleepMode = sleepMode;
+    }
+    bool getSleepMode()
+    {
+        return sleepMode;
+    }
+};
+// 0000000000000000000000000000000000000000000000000000000000000000000000000
 
 class Human : public Character, public Stamina, public BackPack
 {
@@ -747,6 +773,7 @@ private:
     string gender;
     string job;
     Item *itemInHand;
+    bool isItemInHand = 0;
 
 public:
     string getJob()
@@ -780,6 +807,35 @@ public:
     void setItemInHand(Item *itemInHand)
     {
         this->itemInHand = itemInHand;
+        isItemInHand = 1;
+    }
+    void setIsItemInHand(bool isItemInHand)
+    {
+        this->isItemInHand = isItemInHand;
+    }
+    bool getIsItemInHand()
+    {
+        return isItemInHand;
+    }
+    void changeItemInHand(Item *itemInHand)
+    {
+        Item *itemInBackPack = choosingItemFromBackPack();
+        if (itemInHand->getSize() > itemInBackPack->getSize())
+        {
+            if (itemInHand->getSize() - itemInBackPack->getSize() <= getBackPackMaxSize() - getBackPackSize())
+            {
+                this->itemInHand = itemInHand;
+                AddItemToBackPack(itemInHand);
+                setBackPackSize(getBackPackSize() + itemInBackPack->getSize() - itemInHand->getSize());
+            }
+            else
+            {
+                print("The backpack has no capacity for the item in your hand", color_red, color_black);
+            }
+        }
+        this->itemInHand = itemInBackPack;
+        AddItemToBackPack(itemInHand);
+        setBackPackSize(getBackPackSize() + itemInBackPack->getSize() - itemInHand->getSize());
     }
     Human() : Character() {}
 };
@@ -787,51 +843,89 @@ public:
 class Player : public Human
 {
 private:
-    int skillLevelOfFirearm;
-    int skillLevelOfColdWeapon;
-    int rawSkillPoints;
-
+    int skillOfFirearm = 1;
+    int skillOfColdWeapon = 1;
+    int rawSkillPoint = 0;
+    int damage;
 
 public:
-    int getSkillLevelOfFirearm()
+    int getSkillOfFirearm()
     {
-        return skillLevelOfFirearm;
+        return skillOfFirearm;
     }
-    void setSkillLevelOfFirearm(int skillLevelOfFirearm)
+    void upSkillOfFirearm()
     {
-        this->skillLevelOfFirearm = skillLevelOfFirearm;
+        if (this->rawSkillPoint > 0)
+        {
+            this->skillOfFirearm++;
+            this->rawSkillPoint--;
+        }
+        else
+        {
+            print("You do not have enough raw skillpoint", color_red, color_black);
+        }
     }
-    int getSkillLevelOfColdWeapon()
+    int getSkillOfColdWeapon()
     {
-        return skillLevelOfColdWeapon;
+        return skillOfColdWeapon;
     }
-    void setSkillLevelOfColdWeapon(int skillLevelOfColdWeapon)
+    void upSkillOfColdWeapon()
     {
-        this->skillLevelOfColdWeapon = skillLevelOfColdWeapon;
+        if (this->rawSkillPoint > 0)
+        {
+            this->skillOfColdWeapon++;
+            this->rawSkillPoint--;
+        }
+        else
+        {
+            print("You do not have enough raw skillpoint", color_red, color_black);
+        }
     }
 
     int getRawSkillPoint()
     {
-        return this->rawSkillPoints;
+        return this->rawSkillPoint;
     }
-    void setRawSkillPoint(int rawSkillPoints)
+    void upRawSkillPoint()
     {
-        this->rawSkillPoints = rawSkillPoints;
+        this->rawSkillPoint++;
     }
-    bool increaseSkillFirearm(int number)
+    void increaseSkillOfFirearm(int number)
     {
-        if (number >= 1)
+        if (this->rawSkillPoint >= number)
         {
-            this->skillLevelOfFirearm += number;
+            this->skillOfFirearm += number;
+            this->rawSkillPoint -= number;
+        }
+        else
+        {
+            print("You do not have enough raw skillpoints", color_red, color_black);
+        }
+    }
+    void increaseSkillOfColdWeapon(int number)
+    {
+        if (this->rawSkillPoint >= number)
+        {
+            this->skillOfColdWeapon += number;
+            this->rawSkillPoint -= number;
+        }
+        else
+        {
+            print("You do not have enough raw skillpoints", color_red, color_black);
+        }
+    }
+    bool canIncreaseSkillOfFirearm(int number)
+    {
+        if (this->rawSkillPoint >= number)
+        {
             return true;
         }
         return false;
     }
-    bool increaseSkillColdWeapon(int number)
+    bool canIncreaseSkillOfColdWeapon(int number)
     {
-        if (number >= 1)
+        if (this->rawSkillPoint >= number)
         {
-            this->skillLevelOfColdWeapon += number;
             return true;
         }
         return false;
@@ -839,16 +933,16 @@ public:
 
     Player() : Human()
     {
-        setSkillLevelOfFirearm(1);
-        setSkillLevelOfColdWeapon(1);
+        // setSkillOfFirearm(1);
+        // setSkillOfColdWeapon(1);
 
-        setRawSkillPoint(2);
+        // setRawSkillPoint(2);
 
         setType("Player");
     }
 };
 
-class HumanEnemy : public Human
+class HumanEnemy : public Human, public Enemy
 {
     // fsm
     HumanEnemy() : Human()
@@ -857,7 +951,7 @@ class HumanEnemy : public Human
     }
 };
 
-class Zombie : public Character
+class Zombie : public Character, public Enemy
 {
 private:
     int damage;
@@ -878,7 +972,7 @@ public:
     }
 };
 
-class StrongZombie : public Character
+class StrongZombie : public Character, public Enemy
 {
 private:
     int damage;
@@ -1134,7 +1228,7 @@ class ThrowableItem : public Item
 {
 private:
     // int damage;
-    // int 
+    // int
 public:
     ThrowableItem()
     {
@@ -1588,7 +1682,7 @@ public:
     }
     bool buy(Item *item, Player *player)
     {
-        if ((player->getMoney() - item->getPrice() < 0) || (player->getbackPackMaxSize() < player->getbackPackSize() + item->getSize()))
+        if ((player->getMoney() - item->getPrice() < 0) || (player->getBackPackMaxSize() < player->getBackPackSize() + item->getSize()))
         {
             print("You can`t buy this item.\n", color_dark_red, color_black);
             cout << "Press any key to continue.\n";
@@ -1596,7 +1690,7 @@ public:
             q = getch();
             return 0;
         }
-        player->AddItemTObackPack(item);
+        player->AddItemToBackPack(item);
         player->setMoney(player->getMoney() - item->getPrice());
         return 1;
     }
@@ -1792,7 +1886,6 @@ public:
             itemsInShop.push_back(make_pair(33, ancientSword));
         }
 
-
         // 666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
     }
     // 55555555555555555555555555555555555555555555555555555555555
@@ -1912,7 +2005,7 @@ void outputStore(Player *player, Shop shop, int line)
     cout << "HP : " << player->getCurrentHp() << " / " << player->getMaxHp() << "\n\n";
     cout << "Stamina : " << player->getCurrentStamina() << " / " << player->getMaxStamina() << "\n\n";
 
-    cout << "Your backPack`s size : " << player->getbackPackSize() << " / " << player->getbackPackMaxSize() << "\n\n";
+    cout << "Your backPack`s size : " << player->getBackPackSize() << " / " << player->getBackPackMaxSize() << "\n\n";
 
     cout << "Your items in backPack : "
          << "\n";
@@ -2167,7 +2260,7 @@ bool useItem(Item *item, Player *player, Zombie *enemy)
         medicine->useItem(player);
         print("Using " + medicine->getName() + " : +", color_green);
         print(to_string(medicine->getTreatmentValue()) + " HP\n", color_green);
-        player->deletItemFrombackPack(medicine);
+        player->deletItemFromBackPack(medicine);
         return 0;
     }
     if (item->getType() == "Food")
@@ -2176,7 +2269,7 @@ bool useItem(Item *item, Player *player, Zombie *enemy)
         food->useItem(player);
         print("Using " + food->getName() + " : +", color_green);
         print(to_string(food->getStaminaValue()) + " Stamina\n", color_green);
-        player->deletItemFrombackPack(food);
+        player->deletItemFromBackPack(food);
         return 0;
     }
     if (item->getType() == "Throwable Item")
@@ -2186,7 +2279,7 @@ bool useItem(Item *item, Player *player, Zombie *enemy)
 
         print("Using " + throwableItem->getName() + " : ", color_green);
         // print(throwableItem()+" Stamina\n",color_green);
-        player->deletItemFrombackPack(throwableItem);
+        player->deletItemFromBackPack(throwableItem);
         return 0;
     }
     if (item->getType() == "Permanent Item")
@@ -2205,7 +2298,7 @@ bool useItemInShop(Item *item, Player *player)
         medicine->useItem(player);
         print("Using " + medicine->getName() + " : +", color_green);
         print(to_string(medicine->getTreatmentValue()) + " HP\n", color_green);
-        player->deletItemFrombackPack(medicine);
+        player->deletItemFromBackPack(medicine);
         return 0;
     }
     if (item->getType() == "Food")
@@ -2214,308 +2307,369 @@ bool useItemInShop(Item *item, Player *player)
         food->useItem(player);
         print("Using " + food->getName() + " : +", color_green);
         print(to_string(food->getStaminaValue()) + " Stamina\n", color_green);
-        player->deletItemFrombackPack(food);
+        player->deletItemFromBackPack(food);
         return 0;
     }
     if (item->getType() == "Throwable Item")
     {
         ThrowableItem *throwableItem = (ThrowableItem *)item;
-        print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n",color_red);
+        print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n", color_red);
         char q;
         q = getch();
-        if ((int) q == 8)        
+        if ((int)q == 8)
         {
-            print(throwableItem->getName()+" deleted.\n",color_red);
-            player->deletItemFrombackPack(throwableItem);
+            print(throwableItem->getName() + " deleted.\n", color_red);
+            player->deletItemFromBackPack(throwableItem);
         }
         return 0;
     }
     if (item->getType() == "Permanent Item")
     {
         PermanentItem *permanentItem = (PermanentItem *)item;
-        print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n",color_red);
+        print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n", color_red);
         char q;
         q = getch();
         if ((int)q == 8)
         {
-            print(permanentItem->getName()+" deleted.\n",color_red);
-            player->deletItemFrombackPack(permanentItem);
+            print(permanentItem->getName() + " deleted.\n", color_red);
+            player->deletItemFromBackPack(permanentItem);
         }
         return 0;
     }
     return 0;
-}
-
-void displayPlayerInfo(Player *player, Zombie *enemy)
-{
-
-    // *************************change this for time that creat getName function****************************************
-    /*
-        cout << '\n';
-        print(player->getName(), color_light_blue);
-        string output = player->getName();
-        for (int i = 0; i < 15 - output.size(); i++)
-        {
-            cout << " ";
-        }
-        print("Vs", color_white);
-        for (int i = 0; i < 13 - output.size(); i++)
-        {
-            cout << " ";
-        }
-        cout << '\n';
-        print(enemy->getName(), color_dark_red);
-    */
-    print("\n*****************************************************", color_white);
-
-    print("\nPlayer", color_light_blue);
-    string output = player->getName();
-    for (int i = 0; i < 15 - output.size(); i++)
-    {
-        cout << " ";
-    }
-    print("Vs", color_white);
-    for (int i = 0; i < 13 - output.size(); i++)
-    {
-        cout << " ";
-    }
-    print("Enemy\n", color_dark_red);
-
-    print("\nLevel: ", color_light_blue);
-    cout << player->getCurrentLevel();
-    output = "Level: " + to_string(player->getCurrentLevel());
-    for (int i = 0; i < 36 - output.size(); i++)
-    {
-        cout << " ";
-    }
-    print("Level: ", color_dark_red);
-    cout << enemy->getCurrentLevel();
-
-    print("\nXp: ", color_light_blue);
-    cout << player->getCurrentXp();
-    output = "Xp: " + to_string(player->getCurrentXp());
-    for (int i = 0; i < 36 - output.size(); i++)
-    {
-        cout << " ";
-    }
-    print("Xp worth: ", color_dark_red);
-    cout << enemy->getCurrentXp();
-
-    print("\nHp: ", color_light_blue);
-    cout << player->getCurrentHp();
-    print("/", color_light_blue);
-    cout << player->getMaxHp();
-    output = "Hp: " + to_string(player->getCurrentHp()) + "/" + to_string(player->getMaxHp());
-    for (int i = 0; i < 36 - output.size(); i++)
-    {
-        cout << " ";
-    }
-    print("Hp: ", color_dark_red);
-    cout << enemy->getCurrentHp();
-    print("/", 3);
-    cout << enemy->getMaxHp();
-
-    print("\nStamina: ", color_light_blue);
-    cout << player->getCurrentStamina();
-    print("/", color_light_blue);
-    cout << player->getMaxStamina();
-    output = "Stamina: " + to_string(player->getCurrentStamina()) + "/" + to_string(player->getMaxStamina());
-    for (int i = 0; i < 36 - output.size(); i++)
-    {
-        cout << " ";
-    }
-    print("Money: ", color_dark_red);
-    cout << enemy->getMoney();
-
-    print("\nItem in hand: ", color_light_blue);
-    // cout << player->getItemInHand()->getName();
-    // output = "Item in hand: " + player->getItemInHand()->getName();
-    for (int i = 0; i < 36 - 14; i++)
-    {
-        cout << " ";
-    }
-    print("Damage: ", color_dark_red);
-    cout << enemy->getDamage();
-    print("\n*****************************************************\n", color_white);
 }
 // 4444444444444444444444444444444444444444444
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
 void attack(Player *player, Zombie *enemy)
 {
 
-    displayPlayerInfo(player, enemy);
+    // *************************change this for time that creat getName function****************************************
+    // player->choosingItemFromBackpack();
+    /*
+    cout << '\n';
+    print(player->getName(), 3);
+    string output = player->getName();
+    for (int i = 0; i < 15 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Vs", 15);
+    for (int i = 0; i < 13 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    cout << '\n';
+    print(enemy->getName(), 4);
+    */
+    print("\nPlayer", 3);
+    string output = player->getName();
+    for (int i = 0; i < 15 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Vs", 15);
+    for (int i = 0; i < 13 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Enemy\n", 4);
+
+    print("\nLevel: ", 3);
+    cout << player->getCurrentLevel();
+    output = "Level: " + to_string(player->getCurrentLevel());
+    for (int i = 0; i < 36 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Level: ", 4);
+    cout << enemy->getCurrentLevel();
+
+    print("\nXp: ", 3);
+    cout << player->getCurrentXp();
+    output = "Xp: " + to_string(player->getCurrentXp());
+    for (int i = 0; i < 36 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Xp worth: ", 4);
+    cout << enemy->getCurrentXp();
+
+    print("\nHp: ", 3);
+    cout << player->getCurrentHp();
+    print("/", 3);
+    cout << player->getMaxHp();
+    output = "Hp: " + to_string(player->getCurrentHp()) + "/" + to_string(player->getMaxHp());
+    for (int i = 0; i < 36 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Hp: ", 4);
+    cout << enemy->getCurrentHp();
+    print("/", 3);
+    cout << enemy->getMaxHp();
+
+    print("\nStamina: ", 3);
+    cout << player->getCurrentStamina();
+    print("/", 3);
+    cout << player->getMaxStamina();
+    output = "Stamina: " + to_string(player->getCurrentStamina()) + "/" + to_string(player->getMaxStamina());
+    for (int i = 0; i < 36 - output.size(); i++)
+    {
+        cout << " ";
+    }
+    print("Money: ", 4);
+    cout << enemy->getMoney();
+
+    print("\nItem in hand: ", 3);
+    // cout << player->getItemInHand()->getName();
+    // output = "Item in hand: " + player->getItemInHand()->getName();
+    for (int i = 0; i < 36 - 14; i++)
+    {
+        cout << " ";
+    }
+    print("Damage: ", 4);
+    cout << enemy->getDamage();
 
     while (player->getCurrentHp() > 0 && enemy->getCurrentHp() > 0)
     {
+        print("\n\nIf you want to use the items in your backpack, choose number ", color_magenta);
+        print("1 ", color_yellow);
+        print("\nIf you want to use the skill points, choose number ", color_magenta);
+        print("2 ", color_yellow);
+        print("\nIf you want to attack, choose number ", color_magenta);
+        print("3 ", color_yellow);
+        print("\n\nSelect your choice  ", color_yellow);
 
-        bool backToMenu = true;
-        while (backToMenu)
+        int q;
+        cin >> q;
+
+        switch (q)
         {
-            print("\n\nIf you want to use the items in your bag, choose number ", color_magenta);
-            print("1 ", color_yellow);
-            print("\nIf you want to use the skill points, choose number ", color_magenta);
-            print("2 ", color_yellow);
-            print("\nIf you want to attack, choose number ", color_magenta);
-            print("3 ", color_yellow);
-            print("\n\nSelect your choice  ", color_yellow);
 
-            int q;
-            cin >> q;
+        case 1:
+            while (1)
 
-            switch (q)
             {
-            case 1:
-                while (1)
+                Item *item = player->choosingItemFromBackPack();
+                // if (useItem(item, player, enemy))
+                // {
+                //     // player->     %%%%%%%%%%%%%%%%%%%%%%%%%here should use the changeItemInHand%%%%%%%%%%%%%%%%%%%%%%%
+                //     break;
+                // }
+                // else
+                if (useItem(item, player, enemy))
                 {
-                    Item *item = player->choosingItemFromBackPack();
-                    // if (useItem(item, player, enemy))
-                    // {
-                    //     // player->     %%%%%%%%%%%%%%%%%%%%%%%%%here should use the changeItemInHand%%%%%%%%%%%%%%%%%%%%%%%
-                    //     break;
-                    // }
-                    // else
-                    if (useItem(item, player, enemy))
-                    {
-                        backToMenu = false;
-                        break;
-                    }
+                    break;
                 }
-                break;
-            case 2:
-                print("\nyour raw skill points: ", color_green);
-                cout << player->getRawSkillPoint();
+            }
+            break;
+        case 2:
+            clean();
+            print("\nyour raw skill points: ", color_green);
+            cout << player->getRawSkillPoint();
 
-                print("\nIf you want to increase the skill firearm, choose number ", color_magenta);
-                print("1 ", color_yellow);
-                print("\nIf you want to increase the skill ColdWeapon, choose number ", color_magenta);
-                print("2 ", color_yellow);
-                print("\nIf you want to do nothing, press ", color_magenta);
-                print("Backspace \n", color_yellow);
-                print("\nSelect your choice  ", color_yellow);
+            print("\nIf you want to increase the skill firearm, choose number ", color_magenta);
+            print("1 ", color_yellow);
+            print("\nIf you want to increase the skill ColdWeapon, choose number ", color_magenta);
+            print("2 ", color_yellow);
+            print("\nIf you want to do nothing, press ", color_magenta);
+            print("Backspace \n", color_yellow);
+            print("\nSelect your choice  ", color_yellow);
 
-                char i;
-                i = getch();
+            char i;
+            i = getch();
 
-                if (i == 49)
+            if (i == 49)
+            {
+                player->increaseSkillOfFirearm(player->getRawSkillPoint());
+                if (player->canIncreaseSkillOfFirearm(player->getRawSkillPoint()))
                 {
-                    player->increaseSkillFirearm(player->getRawSkillPoint());
-                    if (player->increaseSkillFirearm(player->getRawSkillPoint()))
-                    {
-                        player->setRawSkillPoint(0);
-                        print("\nyour skill level of firearm increased!", color_magenta);
-                        print("\nskill level of firearm: ", color_magenta);
-                        cout << player->getSkillLevelOfFirearm();
-                        print("\n\nPress any key to continue \n", color_yellow);
-                        int w = _getch();
-                    }
-                    else
-                    {
-                        print("\nNothing happened! ", color_magenta);
-                        print("\n\nPress any key to continue ", color_yellow);
-                        int w = _getch();
-                    }
-                }
-                else if (i == 50)
-                {
-                    player->increaseSkillColdWeapon(player->getRawSkillPoint());
-                    if (player->increaseSkillColdWeapon(player->getRawSkillPoint()))
-                    {
-                        player->setRawSkillPoint(0);
-                        print("\nyour skill level of cold weapon increased!", color_magenta);
-                        print("\nskill level of cold weapon: ", color_magenta);
-                        cout << player->getSkillLevelOfColdWeapon();
-                        print("\n\nPress any key to continue \n", color_yellow);
-                        int w = _getch();
-                    }
-                    else
-                    {
-                        print("\nNothing happened! You have not raw skill points!", color_magenta);
-                        print("\n\nPress any key to continue ", color_yellow);
-                        int w = _getch();
-                    }
-                }
-                else if (i == 8)
-                {
-                }
-                else
-                {
-                    print("\nYour choice is not valid! ", color_dark_red);
+                    // player->setRawSkillPoint(0);
+                    print("\nyour skill level of firearm increased!", color_magenta);
+                    print("\nskill level of firearm: ", color_magenta);
+                    cout << player->getSkillOfFirearm();
                     print("\n\nPress any key to continue ", color_yellow);
                     int w = _getch();
                 }
-                break;
-            case 3:
-                // Item *item;
-                // item->getType() = "Permanent Item";
-                // PermanentItem *permanentItem;
-                // permanentItem->attack(player, enemy);
-                break;
-            default:
-                break;
+                else
+                {
+                    print("Nothing happened! ", color_magenta);
+                    print("\n\nPress any key to continue ", color_yellow);
+                    int w = _getch();
+                }
             }
+            else if (i == 50)
+            {
+                player->increaseSkillOfColdWeapon(player->getRawSkillPoint());
+                if (player->canIncreaseSkillOfColdWeapon(player->getRawSkillPoint()))
+                {
+                    // player->setRawSkillPoint(0);
+                    print("\nyour skill level of cold weapon increased!", color_magenta);
+                    print("\nskill level of cold weapon: ", color_magenta);
+                    cout << player->getSkillOfColdWeapon();
+                    print("\n\nPress any key to continue ", color_yellow);
+                    int w = _getch();
+                }
+                else
+                {
+                    print("Nothing happened! ", color_magenta);
+                    print("\n\nPress any key to continue ", color_yellow);
+                    int w = _getch();
+                }
+            }
+            else if (i == 8)
+            {
+            }
+            else
+            {
+                print("Your choice is not valid! ", color_red);
+                print("\n\nPress any key to continue ", color_yellow);
+                int w = _getch();
+            }
+            break;
+        case 3:
+            // Item *item;
+            // item->getType() = "Permanent Item";
+            // PermanentItem *permanentItem;
+            // permanentItem->attack(player, enemy);
+            break;
+        default:
+            break;
         }
+        // *************************change this for time that creat getName function****************************************
+        /*
+        cout << '\n';
+        print(player->getName(), 3);
+        string output = player->getName();
+        for (int i = 0; i < 15 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Vs", 15);
+        for (int i = 0; i < 13 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        cout << '\n';
+        print(enemy->getName(), 4);
+        */
+        print("\nPlayer", 3);
+        string output = player->getName();
+        for (int i = 0; i < 15 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Vs", 15);
+        for (int i = 0; i < 13 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Enemy\n", 4);
 
-        displayPlayerInfo(player, enemy);
+        print("\nLevel: ", 3);
+        cout << player->getCurrentLevel();
+        output = "Level: " + to_string(player->getCurrentLevel());
+        for (int i = 0; i < 36 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Level: ", 4);
+        cout << enemy->getCurrentLevel();
 
+        print("\nXp: ", 3);
+        cout << player->getCurrentXp();
+        output = "Xp: " + to_string(player->getCurrentXp());
+        for (int i = 0; i < 36 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Xp worth: ", 4);
+        cout << enemy->getCurrentXp();
 
+        print("\nHp: ", 3);
+        cout << player->getCurrentHp();
+        print("/", 3);
+        cout << player->getMaxHp();
+        output = "Hp: " + to_string(player->getCurrentHp()) + "/" + to_string(player->getMaxHp());
+        for (int i = 0; i < 36 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Hp: ", 4);
+        cout << enemy->getCurrentHp();
+        print("/", 3);
+        cout << enemy->getMaxHp();
+
+        print("\nStamina: ", 3);
+        cout << player->getCurrentStamina();
+        print("/", 3);
+        cout << player->getMaxStamina();
+        output = "Stamina: " + to_string(player->getCurrentStamina()) + "/" + to_string(player->getMaxStamina());
+        for (int i = 0; i < 36 - output.size(); i++)
+        {
+            cout << " ";
+        }
+        print("Money: ", 4);
+        cout << enemy->getMoney();
+
+        print("\nItem in hand: ", 3);
+        // cout << player->getItemInHand()->getName();
+
+        // output = "Item in hand: " + player->getItemInHand()->getName();
+        for (int i = 0; i < 36 - 14; i++)
+        {
+            cout << " ";
+        }
+        print("Damage: ", 4);
+        cout << enemy->getDamage();
 
         if (enemy->getCurrentHp() > 0)
         {
-
-
-            print("\n\nNow it is the enemy's turn!!\nPress any key... \n", color_yellow);
-            char e;
-            e = _getch();
             player->takeDamage(enemy->getDamage());
-            displayPlayerInfo(player, enemy);
-
         }
-
     }
     // print("\nPress any key to select your items <: :> \n\n", 14);
     // enterKey = _getch();
 
     if (player->getCurrentHp() > 0)
     {
-        print("\n\n\n************* You won in the fight! *************\n", color_yellow);
-
+        // clean();
+        print("\n************* You won in the fight! *************\n", 5);
         player->gainXp(enemy->getCurrentXp());
         player->gainMoney(enemy->getMoney());
-        print("\nxp gained: ", color_green);
+        print("\nxp gained: ", 10);
         cout << enemy->getCurrentXp();
-        print("\ncurrent xp / required xp to level up: ", color_green);
+        print("\ncurrent xp / required xp to level up: ", 10);
         cout << player->getCurrentXp() << "/" << player->getXpToLevelUp();
-        print("\nplayer current level: ", color_green);
+        print("\nplayer current level: ", 10);
         cout << player->getCurrentLevel();
-        print("\nmoney gained: ", color_green);
+        print("\nmoney gained: ", 10);
         cout << enemy->getMoney();
-        print("\nplayer current hp: ", color_green);
+        print("\nplayer current hp: ", 10);
         cout << player->getCurrentHp() << '/' << player->getMaxHp();
-        print("\nplayer current stamina: ", color_green);
+        print("\nplayer current stamina: ", 10);
         cout << player->getCurrentStamina() << '/' << player->getMaxStamina();
     }
     else
     {
-
-        print("\n############ You lost the fight! ############\n", color_green);
-        print("\nxp gained: ", color_green);
+        // clean();
+        print("\n############ You lost the fight! ############\n", 10);
+        print("\nxp gained: ", 10);
         cout << 0;
-        print("\ncurrent xp / required xp to level up: ", color_green);
+        print("\ncurrent xp / required xp to level up: ", 10);
         cout << player->getCurrentXp() << "/" << player->getXpToLevelUp();
-        print("\nplayer current level: ", color_green);
+        print("\nplayer current level: ", 10);
         cout << player->getCurrentLevel();
-        print("\nmoney gained: ", color_green);
+        print("\nmoney gained: ", 10);
         cout << 0;
-        print("\nplayer current hp: ", color_green);
+        print("\nplayer current hp: ", 10);
         cout << player->getCurrentHp() << '/' << player->getMaxHp();
-        print("\nplayer current stamina: ", color_green);
+        print("\nplayer current stamina: ", 10);
         cout << player->getCurrentStamina() << '/' << player->getMaxStamina();
     }
-    print("\n\n^^^^^^^^^^^ Press any key to Continue ^^^^^^^^^^^^ \n", color_yellow);
+    print("\n\n^^^^^^^^^^^ Press any key to Continue ^^^^^^^^^^^^ \n", 14);
     char a = getch();
     clean();
-
-
 }
 
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
