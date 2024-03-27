@@ -593,6 +593,7 @@ public:
     //     }
     // }
     bool checkInput(int num)
+
     {
         if (num >= 1 && num <= backPack.size())
         {
@@ -844,7 +845,6 @@ private:
     int skillOfColdWeapon = 1;
     int rawSkillPoint = 0;
     int damage;
-
 public:
     int getSkillOfFirearm()
     {
@@ -924,6 +924,7 @@ public:
     {
         if (this->rawSkillPoint >= number)
         {
+
             return true;
         }
         return false;
@@ -2394,6 +2395,22 @@ bool useItemInShop(Item *item, Player *player)
 
             print(throwableItem->getName() + " deleted.\n", color_red);
             player->deletItemFromBackPack(throwableItem);
+
+        }
+        return 0;
+    }
+    if (item->getType() == "Permanent Item")
+    {
+        ThrowableItem *throwableItem = (ThrowableItem *)item;
+        print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n", color_red);
+
+        char q;
+        q = getch();
+        if ((int)q == 8)
+        {
+
+            print(throwableItem->getName() + " deleted.\n", color_red);
+            player->deletItemFromBackPack(throwableItem);
         }
         return 0;
     }
@@ -2771,7 +2788,8 @@ Zombie enemyFactory(Player *player)
 }
 void gameLoop(Player *player)
 {
-    bool isVisitedShop = 0;
+    bool isVisitedShop = 1;
+    store(player);
     while (true)
     {
         int diceNumber = nadjafikhah(100);
@@ -2793,6 +2811,7 @@ void gameLoop(Player *player)
 
 int main()
 {
+    clean();
     srand(time(0));
     print("In the final days, a mysterious virus swept across the world,\n",color_light_blue,color_black);
     print("turning all humans into mindless zombies. The once bustling cities were now eerily quiet,\n",color_light_blue,color_black);
