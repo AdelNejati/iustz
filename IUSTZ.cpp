@@ -592,9 +592,11 @@ public:
     //         cout << i << ". " << backPack[i - 1]->getName() << " : " << backPack[i - 1]->getPrice() << "$\n";
     //     }
     // }
-        bool checkInput(int num)
+    bool checkInput(int num)
+
     {
-        if(num>=1&&num<=backPack.size()){
+        if (num >= 1 && num <= backPack.size())
+        {
             return 1;
         }
         return 0;
@@ -612,16 +614,17 @@ public:
         // backPack.erase(backPack.begin() + i - 1);
         // }
 
-
         int num;
-        while(1){
-        print("Enter number of item to use ", 6);
-        cin >> num;
-        if(checkInput(num)){
-        Item *tempItem = backPack[num - 1];
-        return tempItem;
-        }
-        print("Invalid number.\nTry again.\n",color_red);
+        while (1)
+        {
+            print("Enter number of item to use ", 6);
+            cin >> num;
+            if (checkInput(num))
+            {
+                Item *tempItem = backPack[num - 1];
+                return tempItem;
+            }
+            print("Invalid number.\nTry again.\n", color_red);
         }
     }
     void deletItemFromBackPack(Item *item)
@@ -812,16 +815,16 @@ public:
     {
         return isItemInHand;
     }
-    void changeItemInHand(Item *itemInHand)
+    bool changeItemInHand(Item *itemInBackPack)
     {
-        cout << '\n';
-        Item *itemInBackPack = choosingItemFromBackPack();
+        // Item *itemInBackPack = choosingItemFromBackPack();
         if (itemInHand->getSize() > itemInBackPack->getSize())
         {
             if (itemInHand->getSize() - itemInBackPack->getSize() <= getBackPackMaxSize() - getBackPackSize())
             {
                 this->itemInHand = itemInHand;
                 AddItemToBackPack(itemInHand);
+                deletItemFromBackPack(itemInBackPack);
                 setBackPackSize(getBackPackSize() + itemInBackPack->getSize() - itemInHand->getSize());
             }
             else
@@ -831,7 +834,7 @@ public:
         }
         this->itemInHand = itemInBackPack;
         // AddItemToBackPack(itemInHand);
-        setBackPackSize(getBackPackSize() + itemInBackPack->getSize() - itemInHand->getSize());
+        setBackPackSize(getBackPackSize() + itemInBackPack->getSize() - itemInHand->getSize());  
     }
     Human() : Character() {}
 };
@@ -843,8 +846,6 @@ private:
     int skillOfColdWeapon = 1;
     int rawSkillPoint = 0;
     int damage;
-
-
 public:
     int getSkillOfFirearm()
     {
@@ -922,7 +923,9 @@ public:
     }
     bool canIncreaseSkillOfColdWeapon(int number)
     {
-        if (this->rawSkillPoint >= number){
+        if (this->rawSkillPoint >= number)
+        {
+
             return true;
         }
         return false;
@@ -935,9 +938,7 @@ public:
         // setSkillOfColdWeapon(1);
 
         // setRawSkillPoint(2);
-        upRawSkillPoint();
-        upRawSkillPoint();
-        upRawSkillPoint();
+
         setType("Player");
     }
 };
@@ -1437,7 +1438,8 @@ public:
 class ColdWeapon : public PermanentItem
 {
 public:
-    ColdWeapon(){
+    ColdWeapon()
+    {
         setType("Cold Weapon");
     }
     void attack(Player *player, Zombie *enemy) = 0;
@@ -1589,7 +1591,8 @@ public:
 class Firearms : public PermanentItem
 {
 public:
-    Firearms(){
+    Firearms()
+    {
         setType("Firearms");
     }
     void attack(Player *player, Zombie *enemy) = 0;
@@ -1710,6 +1713,9 @@ private:
     int PermanentItemCount = 0;
 
 public:
+    Item* getItemsInShop(int num){
+        return itemsInShop[num-1].second;
+    }
     int getConsumableItemCount()
     {
         return ConsumableItemCount;
@@ -2085,6 +2091,7 @@ void store(Player *player)
     int line = 1;
     while (true)
     {
+    int count = 1;
         char q = '1';
         string a;
         while (1)
@@ -2113,22 +2120,41 @@ void store(Player *player)
                     }
                 }
             }
-            clean();
-
+        // clean();
             if (isdigit(q))
             {
                 a += q;
             }
             else if ((int)q == 13)
             {
+            int price , size  , Max;
                 if (a != "")
                 {
                     num = stoi(a);
                     cout << num;
+                    count = 2;
+                    if (checkInputInShop(num, shop))
+                    {
+                        break;
+                    }
                 }
                 else
                 {
-                    num = line;
+                    price = shop.getItemsInShop(line)->getPrice();
+                    size = shop.getItemsInShop(line)->getSize();
+                    Max = min(player->getMoney()/ price , (player->getBackPackMaxSize()- player->getBackPackSize())/size );
+                    cout << "The maximum number that you can buy from this item is "<< Max <<"\n";
+                    cout << "How many of item do you want ?\n";
+                    cin >> count;
+                    // if (Max=0)
+                    // {
+                    //     print("you cant buy this item.",color_yellow,color_black);
+                    // }
+                    // else if (Max<count)
+                    // {
+                    //     cout << "you cant buy this many of item.";
+                    // }
+                    num=line;
                     if (line > shop.getConsumableItemCount())
                     {
                         num = 10 + line - shop.getConsumableItemCount() - 1;
@@ -2138,11 +2164,13 @@ void store(Player *player)
                     {
                         num = 20 + line - shop.getConsumableItemCount() - shop.getThrowableItemCount() - 1;
                     }
+
+                    if (checkInputInShop(num, shop))
+                    {
+                        break;
+                    }
                 }
-                if (checkInputInShop(num, shop))
-                {
-                    break;
-                }
+
                 a = "";
             }
             else
@@ -2163,8 +2191,10 @@ void store(Player *player)
                 return;
             }
         }
-        cout << "Enter number of item to buy" << num << "\n";
-        //    cin >> num;
+        // cout << "Enter number of item to buy" << num << "\n";
+
+        while (count > 0)
+        {
         if (num == 1)
         {
             Conserve *conserve = new Conserve;
@@ -2305,11 +2335,14 @@ void store(Player *player)
         {
             Spear *spear = new Spear;
             shop.buy(spear, player);
+
         }
         else if (num == 33)
         {
             AncientSword *ancientSword = new AncientSword;
             shop.buy(ancientSword, player);
+        }
+        count --;
         }
     }
 }
@@ -2346,7 +2379,7 @@ bool useItem(Item *item, Player *player, Zombie *enemy)
         player->deletItemFromBackPack(throwableItem);
         return 0;
     }
-    if (item->getType() == "Firearms"||item->getType() == "Cold Weapon")
+    if (item->getType() == "Firearms" || item->getType() == "Cold Weapon")
     {
         PermanentItem *permanentItem = (PermanentItem *)item;
         permanentItem->attack(player, enemy);
@@ -2399,10 +2432,26 @@ bool useItemInShop(Item *item, Player *player)
 
             print(throwableItem->getName() + " deleted.\n", color_red);
             player->deletItemFromBackPack(throwableItem);
+
         }
         return 0;
     }
-    if (item->getType() == "Firearms"||item->getType() == "Cold Weapon")
+    if (item->getType() == "Permanent Item")
+    {
+        ThrowableItem *throwableItem = (ThrowableItem *)item;
+        print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n", color_red);
+
+        char q;
+        q = getch();
+        if ((int)q == 8)
+        {
+
+            print(throwableItem->getName() + " deleted.\n", color_red);
+            player->deletItemFromBackPack(throwableItem);
+        }
+        return 0;
+    }
+    if (item->getType() == "Firearms" || item->getType() == "Cold Weapon")
     {
         PermanentItem *permanentItem = (PermanentItem *)item;
         print("You cant use this item in shop.\nYou can delete it by Backspace.\n\n", color_red);
@@ -2412,7 +2461,6 @@ bool useItemInShop(Item *item, Player *player)
         {
             print(permanentItem->getName() + " deleted.\n", color_red);
             player->deletItemFromBackPack(permanentItem);
-
         }
         return 0;
     }
@@ -2420,7 +2468,6 @@ bool useItemInShop(Item *item, Player *player)
 }
 // 4444444444444444444444444444444444444444444
 // 2222222222222222222222222222222222222222222222222222222222222222222222222
-
 void displayPlayerInfo(Player *player, Zombie *enemy)
 {
     // *************************change this for time that creat getName function****************************************
@@ -2449,7 +2496,7 @@ void displayPlayerInfo(Player *player, Zombie *enemy)
         cout << " ";
     }
     print("Vs", color_white);
-    for (int i = 0; i < 13 - output.size(); i++)
+    for (int i = 0; i < 15 - output.size(); i++)
     {
         cout << " ";
     }
@@ -2548,7 +2595,7 @@ void attack(Player *player, Zombie *enemy)
                 while (1)
                 {
                     Item *item = player->choosingItemFromBackPack();
-                    if (useItem(item, player, enemy))
+                    if (item->getType() == "Firearms" || item->getType() == "Cold Weapon")
                     {
                         bool backToMenu = true;
                         while (backToMenu)
@@ -2582,7 +2629,10 @@ void attack(Player *player, Zombie *enemy)
                                 int w = _getch();
                             }
                         }
-                        backToMainMenu = false;
+                        print("\nPrint any key to back to main menu...", color_yellow);
+                        char backMenu;
+                        backMenu = getch();
+                
                         break;
                     }
                 }
@@ -2623,7 +2673,6 @@ void attack(Player *player, Zombie *enemy)
                             player->increaseSkillOfFirearm(amount);
                             if (canIncrease)
                             {
-                                // print("\nYour skill level of firearm increased!", color_magenta);
                                 print("\nSkill level of firearm: ", color_green);
                                 cout << player->getSkillOfFirearm();
                                 print("\nYour raw skill points: ", color_green);
@@ -2640,7 +2689,6 @@ void attack(Player *player, Zombie *enemy)
                         else if (i == 50)
                         {
                             player->upSkillOfFirearm();
-                            // print("\n\nYour skill level of firearm increased!", color_magenta);
                             print("\nSkill level of firearm: ", color_green);
                             cout << player->getSkillOfFirearm();
                             print("\nYour raw skill points: ", color_green);
@@ -2683,7 +2731,6 @@ void attack(Player *player, Zombie *enemy)
                             player->increaseSkillOfColdWeapon(amount);
                             if (canIncrease)
                             {
-                                // print("\nYour skill level of cold weapon increased!", color_magenta);
                                 print("\nSkill level of cold weapon: ", color_green);
                                 cout << player->getSkillOfColdWeapon();
                                 print("\nYour raw skill points: ", color_green);
@@ -2700,7 +2747,6 @@ void attack(Player *player, Zombie *enemy)
                         else if (i == 50)
                         {
                             player->upSkillOfColdWeapon();
-                            // print("\n\nYour skill level of firearm increased!", color_magenta);
                             print("\nSkill level of cold weapon: ", color_green);
                             cout << player->getSkillOfFirearm();
                             print("\nYour raw skill points: ", color_green);
@@ -2733,10 +2779,10 @@ void attack(Player *player, Zombie *enemy)
                 }
                 break;
             case 3:
-                // Item *item;
-                // item->getType() = "Permanent Item";
-                // PermanentItem *permanentItem;
-                // permanentItem->attack(player, enemy);
+                if(useItem(player->getItemInHand(), player, enemy))
+                {
+                    backToMainMenu = false;
+                }
                 break;
             default:
                 break;
@@ -2817,7 +2863,8 @@ Zombie enemyFactory(Player *player)
 }
 void gameLoop(Player *player)
 {
-    bool isVisitedShop = 0;
+    bool isVisitedShop = 1;
+    store(player);
     while (true)
     {
         int diceNumber = nadjafikhah(100);
@@ -2839,14 +2886,46 @@ void gameLoop(Player *player)
 
 int main()
 {
+    clean();
     srand(time(0));
+    print("In the final days, a mysterious virus swept across the world,\n",color_light_blue,color_black);
+    print("turning all humans into mindless zombies. The once bustling cities were now eerily quiet,\n",color_light_blue,color_black);
+    print("with only the sound of groaning and shuffling echoing through the empty streets.\n",color_light_blue,color_black);
+    print("As the days turned into weeks those who survive decided to make a last stand against the zombie.\n",color_light_blue,color_black);
+    print("They want you as a brave champion to go to war with zombies and save humanity.\n\n\n",color_light_blue,color_black);
 
-    Player Ali;
-    Ali.takeDamage(40);
+    print("Press any key to continue\n", color_orange, color_black);
+    char q='1';
+    q=getch();
 
-    Ali.reduceStamina(50);
-    Ali.setMoney(500);
+    clean();
+    Player player;
+    string name;
+    string job;
+    string gender;
+    int age;
+    print("Enter your name: \n",color_pink,color_black);
+    getline(cin,name);
+
+    print("\nEnter your job: \n",color_pink,color_black);
+    getline(cin,job);
+
+    print("\nEnter your gender: \n",color_pink,color_black);
+    getline(cin,gender);
+
+    print("\nEnter your age: \n",color_pink,color_black);
+    cin >> age;
+
+    player.setName(name);
+    player.setJob(job);
+    player.setGender(gender);
+    player.setAge(age);
+
+    player.takeDamage(40);
+
+    player.reduceStamina(50);
+    player.setMoney(500);
     Wood *item = new Wood;
-    Ali.setItemInHand(item);
-    gameLoop(&Ali);
+    player.setItemInHand(item);
+    gameLoop(&player);
 }
