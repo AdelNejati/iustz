@@ -657,8 +657,18 @@ public:
             print(backPack[i]->getName() + "\n", color_light_blue, color_black);
         }
     }
+
+    Item* getItem(int i)
+    {
+        return backPack[i];
+    }
+
+    int getNumberOfItems()
+    {
+        return backPack.size();
+    }
 };
-class Character : public Hp, public Level // , public Stamina
+class Character : public Hp, public Level  , public Stamina
 {
 private:
     string type;
@@ -763,7 +773,7 @@ public:
 };
 // 0000000000000000000000000000000000000000000000000000000000000000000000000
 
-class Human : public Character, public Stamina, public BackPack
+class Human : public Character, public BackPack
 {
 private:
     int age;
@@ -979,7 +989,7 @@ public:
         setType("Consumable Item");
     }
 
-    virtual void useItem(Player *player) = 0;
+    virtual void useItem(Character *player) = 0;
 };
 class Medicine : public ConsumableItem
 {
@@ -1004,7 +1014,7 @@ public:
     {
         this->treatmentValue = treatmentValue;
     }
-    void useItem(Player *player)
+    void useItem(Character *player)
     {
         if (!getIsUsed())
         {
@@ -1060,7 +1070,7 @@ public:
     {
         return player->getMaxHp() * 3 * 0.6;
     }
-    void useItem(Player *player)
+    void useItem(Character *player)
     {
         setTreatmentValue(player->getMaxHp() - player->getCurrentHp());
         if (!getIsUsed())
@@ -1100,7 +1110,7 @@ public:
     {
         this->staminaValue = treatmentValue;
     }
-    void useItem(Player *player)
+    void useItem(Character *player)
     {
         if (!getIsUsed())
         {
@@ -1139,7 +1149,7 @@ public:
 };
 
 // 555555555555555555555555555555555555555555555555555555555
-class HumanEnemy : public Enemy, public Stamina, public BackPack
+class HumanEnemy : public Enemy, public BackPack
 {
 public:
     enum fightOption
@@ -1158,26 +1168,22 @@ public:
             if (randomNumber == 0)
             {
                 Conserve *conserve = new Conserve;
-                // AddItemToBackPack(conserve);
-                enemyBackPack->AddItemToBackPack(conserve);
+                AddItemToBackPack(conserve);
             }
             if (randomNumber == 1)
             {
                 Drug *drug = new Drug;
-                // AddItemToBackPack(drug);
-                enemyBackPack->AddItemToBackPack(drug);
+                AddItemToBackPack(drug);
             }
             if (randomNumber == 2)
             {
                 Meat *meat = new Meat;
-                // AddItemToBackPack(meat);
-                enemyBackPack->AddItemToBackPack(meat);
+                AddItemToBackPack(meat);
             }
             if (randomNumber == 3)
             {
                 FirstAidBox *firstAidBox = new FirstAidBox;
-                // AddItemToBackPack(firstAidBox);
-                enemyBackPack->AddItemToBackPack(firstAidBox);
+                AddItemToBackPack(firstAidBox);
             }
         }
     }
@@ -1191,7 +1197,7 @@ public:
     }
     void checkAction()
     {
-        enemyBackPack->setBackPackMaxSize(10);
+        this->setBackPackMaxSize(10);
         this->addRandomItemToBackpack(2);
         while (this->getCurrentHp() > 0)
         {
@@ -1199,15 +1205,15 @@ public:
             {
                 while (this->action == fightOption::LOWHP && this->getCurrentHp() <= 0.5 * this->getMaxHp())
                 {
-                    for (Item* item : enemyBackPack->backPack)
+                    for (int i =0; i < this->getNumberOfItems(); i++)
                     {
-                        if (item->getType() == "Medicine")
+                        if (this->getItem(i)->getType() == "Medicine")
                         {
-                            if (item->getName() == "Drug")
+                            if (getItem(i)->getName() == "Drug")
                             {
                                 this->heal(1);
                             }
-                            else if (item->getName() == "First Aid Box")
+                            else if (getItem(i)->getName() == "First Aid Box")
                             {
                                 this->heal(5);
                             }
@@ -1216,15 +1222,15 @@ public:
                 }
                 while (this->action == fightOption::LOWSTAMINA && this->getCurrentStamina() <= 0.4 * this->getMaxStamina())
                 {
-                    for (Item* item : enemyBackPack->backPack)
+                    for (int i =0; i < this->getNumberOfItems(); i++)
                     {
-                        if (item->getType() == "Food")
+                        if (this->getItem(i)->getType()  == "Food")
                         {
-                            if (item->getName() == "Conserve")
+                            if (getItem(i)->getName() == "Conserve")
                             {
                                 this->increaseStamina(1);
                             }
-                            else if (item->getName() == "Meat")
+                            else if (getItem(i)->getName() == "Meat")
                             {
                                 this->increaseStamina(5);
                             }
@@ -1246,7 +1252,6 @@ public:
 private:
     HumanEnemy::fightOption action = fightOption::NONE;
     int turn = static_cast<int>(action);
-    BackPack *enemyBackPack;
 };
 // 555555555555555555555555555555555555555555555555555555555
 class PowerElixir : public Food
@@ -1264,7 +1269,7 @@ public:
     {
         return player->getMaxStamina() * 3 * 0.6;
     }
-    void useItem(Player *player)
+    void useItem(Character *player)
     {
         setStaminaValue(player->getMaxStamina() - player->getCurrentStamina());
         if (!getIsUsed())
@@ -1293,7 +1298,7 @@ public:
     {
         return player->getMaxStamina() * 3 * 0.6;
     }
-    void useItem(Player *player)
+    void useItem(Character *player)
     {
         setStaminaValue(player->getMaxStamina() - player->getCurrentStamina());
         if (!getIsUsed())
