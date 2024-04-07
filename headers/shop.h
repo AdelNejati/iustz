@@ -18,5 +18,5 @@ public:
     int getPermanentItemCount();
     bool buy(Item *item, Player *player);
     void fillShop(Player *player);
-    void outputShopItems(int line);
+    void outputShopItems(int line, int speed);
 };

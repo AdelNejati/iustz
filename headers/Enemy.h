@@ -5,11 +5,12 @@ class Enemy : public Character
 {
 private:
     int damage;
-    bool sleepMode = 0;
+    int sleepMode = 0;
 
 public:
     void setDamage(int damage);
     int getDamage();
-    void setSleepMode(bool sleepMode);
-    bool getSleepMode();
+    void setSleepMode(int sleepMode);
+    int getSleepMode();
+    void enemyAttacks(Character *player);
 };

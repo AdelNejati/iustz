@@ -14,7 +14,7 @@ void Player::upSkillOfFirearm()
     }
     else
     {
-        print("You do not have enough raw skillpoint", color_red, color_black);
+        output("You do not have enough raw skillpoint", color_red, 25);
     }
 }
 
@@ -32,7 +32,7 @@ void Player::upSkillOfColdWeapon()
     }
     else
     {
-        print("You do not have enough raw skillpoint", color_red, color_black);
+        output("You do not have enough raw skillpoint", color_red, 25);
     }
 }
 
@@ -55,7 +55,7 @@ void Player::increaseSkillOfFirearm(int number)
     }
     else
     {
-        print("You do not have enough raw skillpoints", color_red, color_black);
+        output("You do not have enough raw skillpoints", color_red, 25);
     }
 }
 
@@ -68,7 +68,7 @@ void Player::increaseSkillOfColdWeapon(int number)
     }
     else
     {
-        print("You do not have enough raw skillpoints", color_red, color_black);
+        output("You do not have enough raw skillpoints", color_red, 25);
     }
 }
 

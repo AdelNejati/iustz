@@ -15,10 +15,11 @@ public:
 class StrongZombie : public Enemy
 {
 private:
-    int damage;
+    int staminaDamge;
     // Item dashte bashe ke damagesh ziad beshe
 public:
-    int getDamage(); // Player voroodi begire
-    void setDamage(int damage);
+    void enemyAttacks(Character *player);
+    int getStaminaDamage(); // Player voroodi begire
+    void setStaminaDamage(int damage);
     StrongZombie();
 };

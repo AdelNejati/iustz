@@ -10,12 +10,15 @@ int Enemy::getDamage()
     return damage;
 }
 
-void Enemy::setSleepMode(bool sleepMode)
+void Enemy::setSleepMode(int sleepMode)
 {
     this->sleepMode = sleepMode;
 }
 
-bool Enemy::getSleepMode()
+int Enemy::getSleepMode()
 {
     return sleepMode;
+}
+void Enemy::enemyAttacks(Character *player){
+    player->takeDamage(damage);
 }

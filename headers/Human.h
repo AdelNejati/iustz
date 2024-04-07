@@ -3,7 +3,7 @@
 #include <vector>
 // #include "AllClasses.h"
 
-class Human : public Character, public Stamina, public BackPack
+class Human : public Character, public BackPack
 {
 private:
     int age;

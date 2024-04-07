@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 // #include "AllClasses.h"
 
-class Character : public Hp, public Level // , public Stamina
+class Character : public Hp, public Level , public Stamina
 {
 private:
     string type;
