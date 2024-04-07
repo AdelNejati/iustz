@@ -76,8 +76,7 @@
     {
         player->reduceStamina(1);
         setIsUsed(1);
-        // we need a poisoning in Player
-        // enemy->poisoning(20);
+        enemy->setSleepMode(1);
     }
 
     DeadlyPoison::DeadlyPoison()
@@ -99,6 +98,7 @@
         setUnlockLevel(2);
         setDamageValue(25);
         setStaminaRequired(1);
+        // setDisciption();
     }
     void ZombiePoison::Throw(Player *player, Enemy *enemy)
     {

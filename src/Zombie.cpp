@@ -16,18 +16,22 @@ Zombie::Zombie()
     setType("Zombie");
 }
 
-int StrongZombie::getDamage() // Player voroodi begire
+int StrongZombie::getStaminaDamage() // Player voroodi begire
 {
     // bayad tabei az level Enemy bashe
-    return damage;
+    return staminaDamge;
 }
 
-void StrongZombie::setDamage(int damage)
+void StrongZombie::setStaminaDamage(int staminaDamge)
 {
-    this->damage = damage;
+    this->staminaDamge = staminaDamge;
 }
 
 StrongZombie::StrongZombie()
 {
     setType("StrongZombie");
+}
+void StrongZombie::enemyAttacks(Character *player){
+    player->takeDamage(getDamage());
+    player->reduceStamina(staminaDamge);
 }

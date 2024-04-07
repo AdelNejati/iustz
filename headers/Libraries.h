@@ -266,13 +266,18 @@ int nadjafikhah(int peymane);
 
 
 
-void output(string message,int color){
-    
+void output(string message,int color,int speed){
+    if(speed==0){
+        print(message,color);
+    }
+    else{
     for (int i = 0; i < message.size(); i++)
     {   
         string temp="";
         temp=temp+ message[i];
         print(temp,color);
-        this_thread::sleep_for(std::chrono::milliseconds(80));
+
+        this_thread::sleep_for(std::chrono::milliseconds(50/speed));
+    }
     }
 }

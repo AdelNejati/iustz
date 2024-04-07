@@ -23,5 +23,8 @@ public:
     Item *choosingItemFromBackPack();
     void deletItemFromBackPack(Item *item);
     void AddItemToBackPack(Item *item);
-    void ItemsInBackPack();
+    void ItemsInBackPack(int speed);
+    Item* getItem(int i);
+    int getNumberOfItems();
+
 };

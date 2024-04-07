@@ -1,76 +1,94 @@
 #include "../headers/HumanEnemy.h"
 
-// enum HumanEnemy::fightOption
-// {
-//     NONE = 1,
-//     LOWHP,
-//     LOWSTAMINA,
-//     ATTACK
-// };
 
-void HumanEnemy::addRandomItemToBackpack(int num)
-{
-    for (int i = 0; i < num; i++)
+    void HumanEnemy::addRandomItemToBackpack(int num)
     {
-        int randomNumber = nadjafikhah(4);
+        for (int i = 0; i < num; i++)
+        {
+            int randomNumber = nadjafikhah(4);
 
-        if (randomNumber == 0)
-        {
-            Conserve *conserve = new Conserve;
-            AddItemToBackPack(conserve);
-        }
-        if (randomNumber == 1)
-        {
-            Drug *drug = new Drug;
-            AddItemToBackPack(drug);
-        }
-        if (randomNumber == 2)
-        {
-            Meat *meat = new Meat;
-            AddItemToBackPack(meat);
-        }
-        if (randomNumber == 3)
-        {
-            FirstAidBox *firstAidBox = new FirstAidBox;
-            AddItemToBackPack(firstAidBox);
+            if (randomNumber == 0)
+            {
+                Conserve *conserve = new Conserve;
+                AddItemToBackPack(conserve);
+            }
+            if (randomNumber == 1)
+            {
+                Drug *drug = new Drug;
+                AddItemToBackPack(drug);
+            }
+            if (randomNumber == 2)
+            {
+                Meat *meat = new Meat;
+                AddItemToBackPack(meat);
+            }
+            if (randomNumber == 3)
+            {
+                FirstAidBox *firstAidBox = new FirstAidBox;
+                AddItemToBackPack(firstAidBox);
+            }
         }
     }
-}
-
 void HumanEnemy::setFightOption(HumanEnemy::fightOption action)
 {
     this->action = action;
 }
 
-HumanEnemy::fightOption getFightOption()
+HumanEnemy::fightOption HumanEnemy::getFightOption()
 {
-    // return this->action;
+    return this->action;
 }
-
-void HumanEnemy::checkAction()
-{
-    while (this->getCurrentHp() > 0)
+    void HumanEnemy::checkAction()
     {
-        while (this->action != fightOption::ATTACK)
+        setBackPackMaxSize(10);
+        this->addRandomItemToBackpack(2);
+        while (this->getCurrentHp() > 0)
         {
-            if (this->action == fightOption::LOWHP)
+            while (this->action != fightOption::ATTACK)
             {
-                // action = fightOption::LOWHP;
-                this->heal(3);
+                while (this->action == fightOption::LOWHP && this->getCurrentHp() <= 0.5 * this->getMaxHp())
+                {
+                    for (int i =0; i < this->getNumberOfItems(); i++)
+                    {
+                        if (this->getItem(i)->getType() == "Medicine")
+                        {
+                            if (getItem(i)->getName() == "Drug")
+                            {
+                                this->heal(1);
+                            }
+                            else if (getItem(i)->getName() == "First Aid Box")
+                            {
+                                this->heal(5);
+                            }
+                        }
+                    }
+                }
+                while (this->action == fightOption::LOWSTAMINA && this->getCurrentStamina() <= 0.4 * this->getMaxStamina())
+                {
+                    for (int i =0; i < this->getNumberOfItems(); i++)
+                    {
+                        if (this->getItem(i)->getType()  == "Food")
+                        {
+                            if (getItem(i)->getName() == "Conserve")
+                            {
+                                this->increaseStamina(1);
+                            }
+                            else if (getItem(i)->getName() == "Meat")
+                            {
+                                this->increaseStamina(5);
+                            }
+                        }
+                    }
+                }
+                this->turn++;
             }
-            if (this->action == fightOption::LOWSTAMINA)
-            {
-                // action = fightOption::LOWSTAMINA;
-                this->increaseStamina(2);
-            }
-            this->turn++;
+            this->turn = 1;
+            this->addRandomItemToBackpack(2);
         }
-        this->turn = 1;
     }
-}
-// fsm
-HumanEnemy::HumanEnemy()
-{
-    setType("HumanEnemy");
-}
+    // fsm
+    HumanEnemy::HumanEnemy()
+    {
+        setType("HumanEnemy");
+    }
 
