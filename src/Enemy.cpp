@@ -10,15 +10,22 @@ int Enemy::getDamage()
     return damage;
 }
 
-void Enemy::setSleepMode(int sleepMode)
+void Enemy::setSleepMode(bool sleepMode)
 {
     this->sleepMode = sleepMode;
 }
 
-int Enemy::getSleepMode()
+bool Enemy::getSleepMode()
 {
     return sleepMode;
 }
-void Enemy::enemyAttacks(Character *player){
-    player->takeDamage(damage);
+Item *Enemy::getItemInHand()
+{
+    return itemInHand;
 }
+void Enemy::setItemInHand(Item *itemInHand)
+{
+    this->itemInHand = itemInHand;
+     
+}
+

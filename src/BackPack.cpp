@@ -99,7 +99,7 @@ void BackPack::ItemsInBackPack(int speed)
     for (int i = 0; i < backPack.size(); i++)
     {
         cout << "(" << i + 1 << ")...";
-        if (backPack[i]->getType() == "Medicine" || backPack[i]->getType() == "Food")
+        if (backPack[i]->getType() == "Medicine" || backPack[i]->getType() == "Food"|| backPack[i]->getType() == "Book")
         {
             output(backPack[i]->getName() + "\n", color_green, speed);
         }

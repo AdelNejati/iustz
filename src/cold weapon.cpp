@@ -24,8 +24,11 @@
     }
     void ColdWeapon::attack(Player *player, Enemy *enemy)
     {
+        
+        double damage=getDamageValue() * ((player->getSkillOfColdWeapon() + 20.0) / 20.0) * (player->getCurrentStamina()+ 70.0) / 100.0;
+
+        enemy->takeDamage(int(damage));
         player->reduceStamina(getStaminaRequired());
-        enemy->takeDamage(getDamageValue() * ((player->getSkillOfColdWeapon() + 20) / 20) * (player->getCurrentStamina() + 70) / 100);
     }
 
 

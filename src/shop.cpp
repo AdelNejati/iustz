@@ -47,40 +47,54 @@ void Shop::fillShop(Player *player)
         itemsInShop.push_back(make_pair(2, drug));
     }
 
+    ColdWeaponBook *coldWeaponBook = new ColdWeaponBook;
+    if (coldWeaponBook->getUnlockLevel() <= player->getCurrentLevel())
+    {
+        ConsumableItemCount++;
+        itemsInShop.push_back(make_pair(3, coldWeaponBook));
+    }
+
+    FirearmBook *firearmBook = new FirearmBook;
+    if (firearmBook->getUnlockLevel() <= player->getCurrentLevel())
+    {
+        ConsumableItemCount++;
+        itemsInShop.push_back(make_pair(4, firearmBook));
+    }
     Meat *meat = new Meat;
     if (meat->getUnlockLevel() <= player->getCurrentLevel())
     {
         ConsumableItemCount++;
-        itemsInShop.push_back(make_pair(3, meat));
+        itemsInShop.push_back(make_pair(5, meat));
     }
 
     FirstAidBox *firstAidBox = new FirstAidBox;
     if (firstAidBox->getUnlockLevel() <= player->getCurrentLevel())
     {
         ConsumableItemCount++;
-        itemsInShop.push_back(make_pair(4, firstAidBox));
+        itemsInShop.push_back(make_pair(6, firstAidBox));
     }
 
     PowerElixir *powerElixir = new PowerElixir(player);
     if (powerElixir->getUnlockLevel() <= player->getCurrentLevel())
     {
         ConsumableItemCount++;
-        itemsInShop.push_back(make_pair(5, powerElixir));
+        itemsInShop.push_back(make_pair(7, powerElixir));
     }
 
     Mandrake *mandrake = new Mandrake(player);
     if (mandrake->getUnlockLevel() <= player->getCurrentLevel())
     {
         ConsumableItemCount++;
-        itemsInShop.push_back(make_pair(6, mandrake));
+        itemsInShop.push_back(make_pair(8, mandrake));
     }
 
     MysteriousPotion *mysteriousPotion = new MysteriousPotion(player);
     if (mysteriousPotion->getUnlockLevel() <= player->getCurrentLevel())
     {
         ConsumableItemCount++;
-        itemsInShop.push_back(make_pair(7, mysteriousPotion));
+        itemsInShop.push_back(make_pair(9, mysteriousPotion));
     }
+
 
     Stone *stone = new Stone;
     if (stone->getUnlockLevel() <= player->getCurrentLevel())
@@ -294,6 +308,19 @@ void Shop::outputShopItems(int line,int speed)
                 else
                     output("     This item gives you " + to_string(food->getStaminaValue()) + " Stamina\n", color_pink,speed);
             }
+            if (itemsInShop[i - 1].second->getType() == "Book")
+            {
+                Book *book = (Book *)itemsInShop[i - 1].second;
+                if (book->getName() == "Firearm Book")
+                {
+                    output("     by reading this book your skill of firearms increases by one .\n", color_pink,speed);
+                }
+                else if (book->getName() == "Cold Weapon Book")
+                {
+
+                    output("     by reading this book your skill of cold weapon increases by one .\n", color_pink,speed);
+                }
+            }
             if (itemsInShop[i - 1].second->getType() == "Throwable Item")
             {
                 ThrowableItem *throwableItem = (ThrowableItem *)itemsInShop[i - 1].second;
@@ -304,7 +331,7 @@ void Shop::outputShopItems(int line,int speed)
                 else if (throwableItem->getName() == "Zombie Poison")
                 {
 
-                    output("     This item takes " + to_string(throwableItem->getStaminaRequired()) + " Stamina , decreases 25 Hp of zombie enemy and 9 Hp of human enemy\n ", color_pink,speed);
+                    output("     This item takes " + to_string(throwableItem->getStaminaRequired()) + " Stamina , decreases 25 Hp of zombie enemy or 9 Hp of other enemies\n ", color_pink,speed);
                 }
                 else
                     output("     This item takes " + to_string(throwableItem->getStaminaRequired()) + " Stamina and decreases " + to_string(throwableItem->getDamageValue()) + " Hp of your enemy\n", color_pink,speed);
