@@ -93,11 +93,10 @@ MysteriousPotion::MysteriousPotion(Player *player)
 }
 int MysteriousPotion::getPrice(Player *player)
 {
-    return player->getMaxStamina() * 3 * 0.6;
+    return player->getMaxStamina() * 5 * 0.6;
 }
 void MysteriousPotion::useItem(Player *player)
 {
-    // setStaminaValue(player->getMaxStamina() - player->getCurrentStamina());
     if (!getIsUsed())
     {
         player->increaseStamina(100);

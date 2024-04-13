@@ -255,24 +255,44 @@ int getch(void)
 }
 #endif
 
-// decleration space
-int nadjafikhah(int peymane);
-
-// decleration space
-
-
-
-
-
-
-
-void output(string message,int color){
-    
+void output(string message,int color,int speed){
+    if(speed==0){
+        print(message,color);
+    }
+    else{
     for (int i = 0; i < message.size(); i++)
     {   
         string temp="";
         temp=temp+ message[i];
         print(temp,color);
-        this_thread::sleep_for(std::chrono::milliseconds(80));
+
+        this_thread::sleep_for(std::chrono::milliseconds(50/speed));
     }
+    }
+}
+
+
+int nadjafikhah(int peymane)
+{
+    return rand() % peymane;
+}
+
+int inputNumber(string s)
+{
+    int i = s.size() - 1, n = 1, num = 0;
+    while (i != -1)
+    {
+        if (isdigit(s[i]) || (i == 0 && s[i] == '-'))
+        {
+            num = num + (s[i] - '0') * n;
+            n = n * 10;
+        }
+        else
+        {
+            return -1;
+        }
+
+        i--;
+    }
+    return num;
 }

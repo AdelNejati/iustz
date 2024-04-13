@@ -47,11 +47,12 @@ bool BackPack::checkInput(int num)
 
 Item *BackPack::choosingItemFromBackPack()
 {
-    ItemsInBackPack();
+    cout<<"\n";
+    ItemsInBackPack(25);
     char num;
     while (1)
     {
-        print("Enter number of item to use ...\nEnter Backspace to return .\n", 6);
+        output("\nEnter number of item to use ...\nEnter Backspace to return .\n\n", color_gray, 25);
         num = getch();
         if (int(num) == 8)
         {
@@ -62,7 +63,7 @@ Item *BackPack::choosingItemFromBackPack()
             Item *tempItem = backPack[int(num) - 49];
             return tempItem;
         }
-        print("Invalid number.\nTry again.\n", color_red);
+        output("Invalid number.\nTry again.\n", color_red, 25);
     }
 }
 
@@ -73,7 +74,7 @@ void BackPack::deletItemFromBackPack(Item *item)
 
         if (backPack[i]->getName() == item->getName())
         {
-            if ((backPack[i]->getType() != "Firearm") && (backPack[i]->getType() != "Cold Weapon"))
+            if ((backPack[i]->getType() != "Firearm") && (backPack[i]->getType() != "Cold Weapon")&&(backPack[i]->getType() != "Throwable Item"))
             {
                 if (!backPack[i]->getIsUsed())
                 {
@@ -93,12 +94,31 @@ void BackPack::AddItemToBackPack(Item *item)
     backPack.push_back(item);
 }
 
-void BackPack::ItemsInBackPack()
+void BackPack::ItemsInBackPack(int speed)
 {
     for (int i = 0; i < backPack.size(); i++)
     {
         cout << "(" << i + 1 << ")...";
-
-        print(backPack[i]->getName() + "\n", color_light_blue, color_black);
+        if (backPack[i]->getType() == "Medicine" || backPack[i]->getType() == "Food"|| backPack[i]->getType() == "Book")
+        {
+            output(backPack[i]->getName() + "\n", color_green, speed);
+        }
+        else if (backPack[i]->getType() == "Throwable Item")
+        {
+            output(backPack[i]->getName() + "\n", color_yellow, speed);
+        }
+        else
+        {
+            output(backPack[i]->getName() + "\n", color_cyan, speed);
+        }
     }
+}
+Item *BackPack::getItem(int i)
+{
+    return backPack[i];
+}
+
+int BackPack::getNumberOfItems()
+{
+    return backPack.size();
 }

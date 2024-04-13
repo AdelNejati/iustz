@@ -67,7 +67,7 @@ Mandrake::Mandrake(Player *player)
     setName("Mandrake");
     setSize(2);
     setPrice(getPrice(player));
-    setTreatmentValue(1000);
+    setTreatmentValue(player->getMaxHp());
     setUnlockLevel(4);
 }
 

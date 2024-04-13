@@ -14,7 +14,7 @@ void Player::upSkillOfFirearm()
     }
     else
     {
-        print("You do not have enough raw skillpoint", color_red, color_black);
+        output("You do not have enough raw skillpoint", color_red, 25);
     }
 }
 
@@ -32,7 +32,7 @@ void Player::upSkillOfColdWeapon()
     }
     else
     {
-        print("You do not have enough raw skillpoint", color_red, color_black);
+        output("You do not have enough raw skillpoint", color_red, 25);
     }
 }
 
@@ -55,7 +55,7 @@ void Player::increaseSkillOfFirearm(int number)
     }
     else
     {
-        print("You do not have enough raw skillpoints", color_red, color_black);
+        output("You do not have enough raw skillpoints", color_red, 25);
     }
 }
 
@@ -68,7 +68,7 @@ void Player::increaseSkillOfColdWeapon(int number)
     }
     else
     {
-        print("You do not have enough raw skillpoints", color_red, color_black);
+        output("You do not have enough raw skillpoints", color_red, 25);
     }
 }
 
@@ -91,7 +91,71 @@ bool Player::canIncreaseSkillOfColdWeapon(int number)
     return false;
 }
 
-Player::Player() : Human()
+Player::Player() : Character()
 {
     setType("Player");
+}
+string Player::getJob()
+{
+    return job;
+}
+
+void Player::setJob(string job)
+{
+    this->job = job;
+}
+
+int Player::getAge()
+{
+    return age;
+}
+
+void Player::setAge(int age)
+{
+    this->age = age;
+}
+
+string Player::getGender()
+{
+    return gender;
+}
+
+void Player::setGender(string gender)
+{
+    this->gender = gender;
+}
+
+Item *Player::getItemInHand()
+{
+    return itemInHand;
+}
+
+void Player::setItemInHand(Item *itemInHand)
+{
+    this->itemInHand = itemInHand;
+    isItemInHand = 1;
+}
+
+void Player::setIsItemInHand(bool isItemInHand)
+{
+    this->isItemInHand = isItemInHand;
+}
+
+bool Player::getIsItemInHand()
+{
+    return isItemInHand;
+}
+
+void Player::changeItemInHand(Item *itemInBackPack)
+{
+    if (itemInHand->getSize() - itemInBackPack->getSize() <= getBackPackMaxSize() - getBackPackSize())
+    {
+        deletItemFromBackPack(itemInBackPack);
+        AddItemToBackPack(itemInHand);
+        itemInHand = itemInBackPack;
+    }
+    else
+    {
+        print("The backpack has no capacity for the item in your hand", color_red, color_black);
+    }
 }

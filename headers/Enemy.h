@@ -4,12 +4,15 @@
 class Enemy : public Character
 {
 private:
+    Item *itemInHand;
     int damage;
-    bool sleepMode = 0;
+    int sleepMode = 0;
 
 public:
     void setDamage(int damage);
     int getDamage();
     void setSleepMode(bool sleepMode);
     bool getSleepMode();
+    Item *getItemInHand();
+    void setItemInHand(Item *itemInHand);
 };
