@@ -82,7 +82,7 @@ bool useItem(Item *item, Player *player, Enemy *enemy)
         player->deletItemFromBackPack(throwableItem);
         return 0;
     }
-    if (item->getType() == "Firearms" || item->getType() == "Cold Weapon")
+    if (item->getType() == "Firearm" || item->getType() == "Cold Weapon")
     {
         PermanentItem *permanentItem = (PermanentItem *)item;
         permanentItem->attack(player, enemy);
@@ -150,7 +150,7 @@ bool useItemInShop(Item *item, Player *player)
         }
         return 1;
     }
-    if (item->getType() == "Firearms" || item->getType() == "Cold Weapon")
+    if (item->getType() == "Firearm" || item->getType() == "Cold Weapon")
     {
         PermanentItem *permanentItem = (PermanentItem *)item;
         output("You cant use this item in shop.\nYou can sell it by Backspace.\n\n", color_gray, 25);

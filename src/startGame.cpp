@@ -57,7 +57,11 @@ void IUSTZ()
     output("turning all humans into mindless Enemys. The once bustling cities were now eerily quiet,\n", color_light_blue, 1);
     output("with only the sound of groaning and shuffling echoing through the empty streets.\n", color_light_blue, 1);
     output("As the days turned into weeks those who survive decided to make a last stand against the Enemy.\n", color_light_blue, 1);
-    output("They want you as a brave champion to go to war with Enemys and save humanity.\n\n\n", color_light_blue, 1);
+    output("They want you as a brave champion to go to war with Enemys and save humanity.\n", color_light_blue, 1);
+    output("In this way, there are factions of animals that have survived in these conditions,\n", color_light_blue, 1);
+    output("and some humans have been forced to coexist with these animals.\n", color_light_blue, 1);
+    output("You can join them and use their help. But don't forget that no one can be trusted...\n\n", color_light_blue, 1);
+    output("No one can be trusted...\n\n\n", color_light_blue, 1);
 
     output("Press any key to continue\n", color_orange, 25);
     char q = '1';
@@ -71,6 +75,7 @@ void createNewPlayer(int i)
     string job;
     string gender;
     string age = "age";
+    string faction;
 
     output("Player " + to_string(i + 1) + ": \n\n", color_pink, color_black);
     output("Enter your name: \n", color_pink, color_black);
@@ -87,21 +92,77 @@ void createNewPlayer(int i)
         output("\nEnter your age: \n", color_pink, color_black);
         cin >> age;
     }
+    while (inputNumber(faction) != 1 && inputNumber(faction) != 2 && inputNumber(faction) != 3 && inputNumber(faction) != 4)
+    {
+        output("\nYou can choose one of these factions :\n", color_pink, color_black);
+        output("\n 1. THE ENDLESS SERPENT\n", color_pink, color_black);
+        output("\n 2. CULT OF THE RAT\n", color_pink, color_black);
+        output("\n 3. THE PALE RAVEN\n", color_pink, color_black);
+        output("\n 4. THE SUPPLICANT SPIDER\n", color_pink, color_black);
+        cin >> faction;
+    }
 
     player->setName(name);
     player->setJob(job);
     player->setGender(gender);
     player->setAge(inputNumber(age));
-    SleepingPoison *sleepingPoison = new SleepingPoison;
-    player->AddItemToBackPack(sleepingPoison);
-    player->takeDamage(80);
-    player->reduceStamina(50);
-    player->setMoney(500);
-    Wood *item = new Wood;
-    player->setItemInHand(item);
+
+    if (inputNumber(faction) == 1)
+    {
+        player->takeDamage(15);
+        player->reduceStamina(15);
+        player->setMoney(100);
+        Wood *item = new Wood;
+        ZombiePoison *zombiePoison = new ZombiePoison;
+        player->AddItemToBackPack(zombiePoison);
+        DeadlyPoison *deadlyPoison = new DeadlyPoison;
+        player->AddItemToBackPack(deadlyPoison);
+        SleepingPoison *sleepingPoison = new SleepingPoison;
+        player->AddItemToBackPack(sleepingPoison);
+        player->setItemInHand(item);
+    }
+    if (inputNumber(faction) == 2)
+    {
+        player->takeDamage(30);
+        player->reduceStamina(0);
+        player->setMoney(800);
+        for (int i = 0; i < 2; i++)
+        {
+            Meat *meat = new Meat;
+            player->AddItemToBackPack(meat);
+        }
+        Wood *item = new Wood;
+        player->setItemInHand(item);
+    }
+    if (inputNumber(faction) == 3)
+    {
+        player->takeDamage(0);
+        player->reduceStamina(30);
+        player->setMoney(200);
+        for (int i = 0; i < 2; i++)
+        {
+            Grenade *grenade = new Grenade;
+            player->AddItemToBackPack(grenade);
+        }
+        Knife *knife = new Knife;
+        player->setItemInHand(knife);
+    }
+    if (inputNumber(faction) == 4)
+    {
+        player->takeDamage(0);
+        player->reduceStamina(0);
+        player->setMoney(400);
+        player->upRawSkillPoint();
+        player->upRawSkillPoint();
+        player->upRawSkillPoint();
+        Wood *item = new Wood;
+        player->setItemInHand(item);
+    }
+
     Players.push_back(player);
 }
-void startGame(){
+void startGame()
+{
     string num = "num";
     IUSTZ();
     clean();

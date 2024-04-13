@@ -1,6 +1,6 @@
 #include "../headers/Attack.h"
 
-void itemSelectionDuringBattle(Player *player, Enemy *enemy, bool isEnemyAlive, bool backToMainMenu)
+bool itemSelectionDuringBattle(Player *player, Enemy *enemy, bool isEnemyAlive, bool backToMainMenu)
 {
     while (1)
     {
@@ -9,7 +9,7 @@ void itemSelectionDuringBattle(Player *player, Enemy *enemy, bool isEnemyAlive, 
         {
             break;
         }
-        if (item->getType() == "Firearms" || item->getType() == "Cold Weapon")
+        if (item->getType() == "Firearm" || item->getType() == "Cold Weapon")
         {
             bool backToMenu = true;
             while (backToMenu)
@@ -43,7 +43,7 @@ void itemSelectionDuringBattle(Player *player, Enemy *enemy, bool isEnemyAlive, 
                     int w = _getch();
                 }
             }
-            output("\noutput any key to back to main menu...", color_gray, 25);
+            output("\nprees any key to back to main menu...", color_gray, 25);
             char backMenu;
             backMenu = getch();
 
@@ -60,11 +60,12 @@ void itemSelectionDuringBattle(Player *player, Enemy *enemy, bool isEnemyAlive, 
                 {
                     isEnemyAlive = false;
                     backToMainMenu = false;
-                    break;
+                    return 1;
                 }
             }
         }
     }
+    return 0;
 }
 
 void skillPointsDuringBattle(Player *player, Enemy *enemy)
@@ -242,7 +243,9 @@ Player *attack(Player *player, Enemy *enemy)
             switch (q)
             {
             case 49:
-                itemSelectionDuringBattle(player, enemy, true, true);
+                if(itemSelectionDuringBattle(player, enemy, true, true)){
+                    backToMainMenu=0;
+                }
                 break;
             case 50:
                 skillPointsDuringBattle(player, enemy);
@@ -266,7 +269,7 @@ Player *attack(Player *player, Enemy *enemy)
             enemyController->sendDataForView(player, enemy);
         }
         enemyController->enemyAttacks(player, enemy);
-        player = changePlayer(player);
+        // player = changePlayer(player);
     }
 
     if (player->getCurrentHp() > 0)
