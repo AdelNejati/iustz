@@ -336,7 +336,7 @@ void Shop::outputShopItems(int line,int speed)
                 else
                     output("     This item takes " + to_string(throwableItem->getStaminaRequired()) + " Stamina and decreases " + to_string(throwableItem->getDamageValue()) + " Hp of your enemy\n", color_pink,speed);
             }
-            if (itemsInShop[i - 1].second->getType() == "Firearms")
+            if (itemsInShop[i - 1].second->getType() == "Firearm")
             {
                 PermanentItem *permanentItem = (PermanentItem *)itemsInShop[i - 1].second;
                 output("     This Firearm takes " + to_string(permanentItem->getStaminaRequired()) + " Stamina and decreases " + to_string(permanentItem->getDamageValue()) + " Hp of your enemy\n", color_pink,speed);

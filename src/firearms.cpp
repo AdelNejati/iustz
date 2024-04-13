@@ -5,7 +5,7 @@ using namespace std;
 
 Firearms::Firearms()
 {
-    setType("Firearms");
+    setType("Firearm");
 }
 void Firearms::attack(Player *player, Enemy *enemy)
 {
